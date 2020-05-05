@@ -9,7 +9,6 @@ from compile.process import STD_FILENAMES
 from grammar.ScriptLexer import ScriptLexer
 from grammar.ScriptParser import ScriptParser
 from visitor.visitor import ScriptVisitor
-from visitor.nodes import *
 
 
 class Context:
@@ -25,12 +24,9 @@ class Context:
         self.symbols[name][signature] = value
 
     def find(self, name, signature=None):
-        if signature:
-            return [s for s in
-                    (list(self.symbols.get(name, {}).items()) + ((self.parent and self.parent.find(name)) or [])) if
-                    s[0] == signature]
-        else:
-            return list(self.symbols.get(name, {}).items()) + ((self.parent and self.parent.find(name)) or [])
+        return [s[1] for s in
+                self.symbols.get(name, {}).items() if s[0] == signature] + (
+                   self.parent and self.parent.find(name, signature) or [])
 
 
 def read_script(path):
@@ -68,17 +64,19 @@ class GlobalContext(Context):
 class FileContext(Context):
     def __init__(self, parent):
         super().__init__(parent)
-        self.imported = []
 
     def new_script_context(self):
         return ScriptContext(self)
 
-    def import_context(self, context):
-        self.imported.append(context)
-
-    def find_imported(self, name):
-        return (list(self.symbols.get(name, {}).values()) + (self.parent and self.parent.find(name)) or [] +
-                [s for f in self.imported for s in f.find(name)])
+    def import_script(self, script):
+        context = script.context
+        for name, values in context.symbols.items():
+            if name not in self.symbols:
+                self.symbols[name] = {}
+            for signature, value in values.items():
+                if hasattr(value, 'modifiers') and 'private' in value.modifiers:
+                    continue
+                self.symbols[name][signature] = value
 
 
 class ScriptContext(Context):

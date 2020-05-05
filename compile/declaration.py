@@ -11,17 +11,14 @@ class ScriptFile:
 
         if import_std:
             for f in STD_FILENAMES:
-                self.context.imported.append(self.global_context.get(f))
+                self.context.import_script(self.global_context.get(f))
 
         for i in ast.imports:
-            self.context.imported.append(self.global_context.get(i.identifier.value))
+            self.context.import_script(self.global_context.get(i.identifier.value))
 
-        constants = []
         for d in ast.top_level_declarations:
             if isinstance(d, ConstantDeclarationNode):
-                constants.append(Constant(d, self.context))
-        for c in constants:
-            c.resolve()
+                Constant(d, self.context)
 
         return
 
@@ -33,18 +30,30 @@ class Constant:
         self.identifier = node.identifier.value
         self.expression = Expression(node.expression, context)
         self.resolving = False
-        context.add(self.identifier, (), self)
+        self.type = None
+        self.value = None
+        context.add(self.identifier, None, self)
 
     def resolve(self):
         if self.resolving:
-            raise RuntimeError('Failed to resolve constant (possible circular dependencies)')
+            raise RuntimeError('Failed to resolve constant (possible circular dependency)')
         self.resolving = True
         self.expression.simplify()
         self.resolving = False
-        if isinstance(self.expression.value, NumberLiteralNode) or isinstance(self.expression.value, BooleanLiteralNode):
+        if isinstance(self.expression.value, NumberLiteralNode):
+            self.type = 'Number'
+            self.value = self.expression.value.value
+            return self.expression.value
+        elif isinstance(self.expression.value, BooleanLiteralNode):
+            self.type = 'Boolean'
+            self.value = self.expression.value.value
             return self.expression.value
         else:
             raise RuntimeError('Failed to resolve constant')
+
+
+class Function:
+    pass
 
 
 class Expression:
@@ -109,7 +118,7 @@ class Expression:
                 elif op == '||':
                     return BooleanLiteralNode(lhv or rhv)
         elif isinstance(node, SimpleIdentifierNode) or isinstance(node, IdentifierNode):
-            matches = self.context.find(node.text, ())
-            if matches and isinstance(matches[0][1], Constant):
-                return matches[0][1].resolve()
+            matches = self.context.find(node.text, None)
+            if matches and isinstance(matches[0], Constant):
+                return matches[0].resolve()
         return node

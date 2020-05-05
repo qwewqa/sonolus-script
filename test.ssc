@@ -1,3 +1,7 @@
+import test2
+
+const bob = 10 * alice
+
 const a = 10.0
 const b = 5
 const ab = a * b
