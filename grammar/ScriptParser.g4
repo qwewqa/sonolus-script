@@ -3,16 +3,81 @@ parser grammar ScriptParser;
 options { tokenVocab = ScriptLexer; }
 
 scriptFile
-    : NL* anysemi* (topLevelObject (anysemi+ topLevelObject?)*)? EOF
+    : NL* importList anysemi* (topLevelObject (anysemi+ topLevelObject?)*)? EOF
+    ;
+
+importList
+    : importHeader*
+    ;
+
+importHeader
+    : IMPORT simpleIdentifier semi?
     ;
 
 topLevelObject
     : functionDeclaration
-    | variableDeclaration
+    | constantDeclaration
+    | structDeclaration
+    | scriptDeclaration
+    | propertyDeclaration
+    ;
+
+structDeclaration
+    : modifierList? STRUCT NL* simpleIdentifier
+    structFields
+    NL* structBody
+    ;
+
+structBody
+    : LCURL NL* structMemberDeclaration* NL* RCURL
+    ;
+
+structMemberDeclaration
+    : (functionDeclaration
+    | propertyDeclaration
+    | constantDeclaration) anysemi*
+    ;
+
+structFields
+    : LPAREN (structField (COMMA structField)*)? RPAREN
+    ;
+
+structField
+    : CONST? simpleIdentifier COLON userType
+    ;
+
+scriptDeclaration
+    : SCRIPT NL* simpleIdentifier
+    NL* scriptBody
+    ;
+
+scriptBody
+    : LCURL NL* scriptMemberDeclaration* NL* RCURL
+    ;
+
+scriptMemberDeclaration
+    : (functionDeclaration
+    | propertyDeclaration
+    | constantDeclaration
+    | callbackDeclaration) anysemi*
+    ;
+
+propertyDeclaration
+    : modifierList? (VAR | VAL)
+    simpleIdentifier
+    (NL* (ASSIGNMENT) NL* expression)?
+    (NL* semi? NL* (getter (semi setter)? | setter (semi getter)?))?
+    ;
+
+callbackDeclaration
+    : CALLBACK
+    NL* simpleIdentifier
+    NL* functionBody
     ;
 
 functionDeclaration
-    : FUN
+    : modifierList? FUN
+    (NL* userType NL* DOT)?
     NL* simpleIdentifier
     NL* functionParameters
     NL* functionBody
@@ -23,7 +88,7 @@ functionParameters
     ;
 
 functionParameter
-    : simpleIdentifier // (ASSIGNMENT expression)?
+    : parameter
     ;
 
 functionBody
@@ -45,13 +110,33 @@ statement
 
 declaration
     : functionDeclaration
-    | variableDeclaration
+    | propertyDeclaration
+    | constantDeclaration
     ;
 
-variableDeclaration
-    : VAR
+getter
+    : modifierList? GETTER
+    | modifierList? GETTER NL* LPAREN RPAREN (NL* COLON NL* userType)? NL* functionBody
+    ;
+
+setter
+    : modifierList? SETTER
+    | modifierList? SETTER NL* LPAREN (simpleIdentifier | parameter) RPAREN NL* functionBody
+    ;
+
+constantDeclaration
+    : modifierList? CONST
     simpleIdentifier
-    (NL* (ASSIGNMENT) NL* expression)
+    NL* (ASSIGNMENT) NL* expression
+    ;
+
+parameter
+    : simpleIdentifier
+    | simpleIdentifier COLON userType
+    ;
+
+userType
+    : simpleIdentifier
     ;
 
 expression
@@ -83,7 +168,11 @@ additiveExpression
     ;
 
 multiplicativeExpression
-    : prefixUnaryExpression (multiplicativeOperation NL* prefixUnaryExpression)*
+    : exponentiationExpression (multiplicativeOperation NL* exponentiationExpression)*
+    ;
+
+exponentiationExpression
+    : prefixUnaryExpression (POW NL* prefixUnaryExpression)*
     ;
 
 prefixUnaryExpression
@@ -115,7 +204,7 @@ valueArguments
     ;
 
 valueArgument
-    : (simpleIdentifier NL* ASSIGNMENT NL*)? NL* expression
+    : expression
     ;
 
 conditionalExpression
@@ -140,12 +229,35 @@ whileExpression
     : WHILE NL* LPAREN expression RPAREN NL* controlStructureBody?
     ;
 
+modifierList
+    : modifier+
+    ;
+
+modifier
+    : (PUBLIC
+    | PRIVATE
+    | SHARED
+    | STATIC
+    | OPERATOR
+    | DATA) NL*
+    ;
+
 identifier
     : simpleIdentifier (NL* DOT simpleIdentifier)*
     ;
 
 simpleIdentifier
     : Identifier
+    //soft keywords:
+    | DATA
+    | GETTER
+    | IMPORT
+    | OPERATOR
+    | PRIVATE
+    | PUBLIC
+    | SETTER
+    //strong keywords
+    | CONST
     ;
 
 literalConstant

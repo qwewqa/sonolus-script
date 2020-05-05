@@ -1,0 +1,29 @@
+import number
+
+struct BlockAccessor(
+    const id: Number
+) {
+    fun get(index: Number) {
+        Get(id, index)
+    }
+
+    fun set(index: Number, value: Number) {
+        Set(id, index, value)
+    }
+}
+
+val LevelMemory get() { BlockAccessor(0) }
+val LevelData get() { BlockAccessor(1) }
+val LevelOption get() { BlockAccessor(2) }
+val EntityInfo get() { BlockAccessor(20) }
+
+struct Entity() {
+    static val index
+        get() { EntityInfo.get(0) }
+
+    static val archetype
+        get() { EntityInfo.get(1) }
+
+    static val state
+        get() { EntityInfo.get(2) }
+}

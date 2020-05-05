@@ -1,0 +1,85 @@
+struct Number(value: Alloc) {
+    operator fun plus(other: Number) {
+        Add(value,  other.value)
+    }
+
+    operator fun minus(other: Number) {
+        Subtract(value, other.value)
+    }
+
+    operator fun mul(other: Number) {
+        Multiply(value, other.value)
+    }
+
+    operator fun div(other: Number) {
+        Divide(value, other.value)
+    }
+
+    operator fun mod(other: Number) {
+        Mod(value, other.value)
+    }
+
+    operator fun pow(other: Number) {
+        Power(value, other.value)
+    }
+
+    operator fun eq(other: Number) {
+        Equal(value, other.value)
+    }
+
+    operator fun neq(other: Number) {
+        NotEqual(value, other.value)
+    }
+
+    operator fun gt(other: Number) {
+        Greater(value, other.value)
+    }
+
+    operator fun geq(other: Number) {
+        GreaterOr(value, other.value)
+    }
+
+    operator fun lt(other: Number) {
+        Less(value, other.value)
+    }
+
+    operator fun leq(other: Number) {
+        LessOr(value, other.value)
+    }
+
+    fun log() {
+        Log(value)
+    }
+
+    fun abs() {
+        Abs(value)
+    }
+
+    fun sign() {
+        Sign(value)
+    }
+
+    fun ceil() {
+        Ceil(value)
+    }
+
+    fun floor() {
+        Floor(value)
+    }
+
+    fun round() {
+        Round(value)
+    }
+
+    fun fpart() {
+        Frac(value)
+    }
+
+    fun ipart() {
+        Trunc(value)
+    }
+
+    val percent get() { this / 100 }
+    val deg get() { Degree(this.value) }
+    val rad get() { Radian(this.value) }
+}
