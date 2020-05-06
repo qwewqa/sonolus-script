@@ -4,8 +4,7 @@ import pathlib
 
 from antlr4 import *
 
-from compile.declaration import ScriptFile
-from compile.process import STD_FILENAMES
+from compile.constants import STD_FILENAMES
 from grammar.ScriptLexer import ScriptLexer
 from grammar.ScriptParser import ScriptParser
 from visitor.visitor import ScriptVisitor
@@ -15,13 +14,27 @@ class Context:
     def __init__(self, parent=None):
         self.parent = parent
         self.symbols = {}
+        self.native_symbols = {}
 
-    def add(self, name, signature, value):
+    def add(self, name, signature, value, native=True):
         if name not in self.symbols:
             self.symbols[name] = {}
         if signature in self.symbols[name]:
             raise RuntimeError(f'Symbol {name} already exists in context')
         self.symbols[name][signature] = value
+        if native:
+            if name not in self.native_symbols:
+                self.native_symbols[name] = {}
+            self.native_symbols[name][signature] = value
+
+    def import_context(self, context):
+        for name, values in context.native_symbols.items():
+            if name not in self.symbols:
+                self.symbols[name] = {}
+            for signature, value in values.items():
+                if hasattr(value, 'modifiers') and 'private' in value.modifiers:
+                    continue
+                self.add(name, signature, value, False)
 
     def find(self, name, signature=None):
         return [s[1] for s in
@@ -53,6 +66,7 @@ class GlobalContext(Context):
         if name[-4:] == '.scc':
             name = name[:-4]
         if name not in self.symbols or () not in self.symbols[name]:
+            from compile.declaration import ScriptFile
             self.add(name, (),
                      ScriptFile(read_script(os.path.join(self.path, f'{name}.ssc')), self, not self.initializing))
         return self.symbols[name][()]
@@ -68,15 +82,15 @@ class FileContext(Context):
     def new_script_context(self):
         return ScriptContext(self)
 
+    def new_struct_context(self):
+        return StructContext(self)
+
     def import_script(self, script):
-        context = script.context
-        for name, values in context.symbols.items():
-            if name not in self.symbols:
-                self.symbols[name] = {}
-            for signature, value in values.items():
-                if hasattr(value, 'modifiers') and 'private' in value.modifiers:
-                    continue
-                self.symbols[name][signature] = value
+        self.import_context(script.context)
+
+
+class StructContext(Context):
+    pass
 
 
 class ScriptContext(Context):
@@ -94,6 +108,10 @@ class CallbackContext(Context):
     def __init__(self, parent):
         super().__init__(parent)
         self.temporary_memory = BlockAllocator(100, 16)
+
+
+class FunctionContext(Context):
+    pass
 
 
 class BlockAllocator:

@@ -31,7 +31,7 @@ struct Point(x: Number, y: Number) {
     }
 }
 
-script Foo {
+script Foo() {
     const p = 4
 
     var x = 0
@@ -54,4 +54,11 @@ fun foo(x, y) {
     if (x > y) {
         x = a
     }
+}
+
+script test(
+    startX,
+    startY
+) {
+    val startPosition = Point(startX, startY)
 }

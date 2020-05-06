@@ -73,6 +73,7 @@ CALLBACK: 'callback' ;
 CONST: 'const' ;
 VAR: 'var' ;
 VAL: 'val' ;
+PIT: 'pit' ;
 IF: 'if' ;
 ELSE: 'else' ;
 WHILE: 'while' ;

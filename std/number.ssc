@@ -1,4 +1,4 @@
-struct Number(value: Alloc) {
+struct Number(value: Raw) {
     operator fun plus(other: Number) {
         Add(value,  other.value)
     }
@@ -47,6 +47,14 @@ struct Number(value: Alloc) {
         LessOr(value, other.value)
     }
 
+    operator fun neg() {
+        this * -1
+    }
+
+    operator fun pos() {
+        this
+    }
+
     fun log() {
         Log(value)
     }
@@ -80,6 +88,6 @@ struct Number(value: Alloc) {
     }
 
     val percent get() { this / 100 }
-    val deg get() { Degree(this.value) }
-    val rad get() { Radian(this.value) }
+    val deg get() { Degree(value) }
+    val rad get() { Radian(value) }
 }

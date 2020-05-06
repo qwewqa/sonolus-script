@@ -56,7 +56,17 @@ class ScriptVisitor(ScriptParserVisitor):
         )
 
     def visitScriptDeclaration(self, ctx: ScriptParser.ScriptDeclarationContext):
-        return ScriptDeclarationNode(self.visit(ctx.simpleIdentifier()), self.visit(ctx.scriptBody()))
+        return ScriptDeclarationNode(
+            self.visit(ctx.simpleIdentifier()),
+            self.visit(ctx.scriptParameters()),
+            self.visit(ctx.scriptBody())
+        )
+
+    def visitScriptParameters(self, ctx:ScriptParser.ScriptParametersContext):
+        return self.tryVisitList(ctx.scriptParameter())
+
+    def visitScriptParameter(self, ctx:ScriptParser.ScriptParameterContext):
+        return self.visit(ctx.simpleIdentifier())
 
     def visitScriptBody(self, ctx: ScriptParser.ScriptBodyContext):
         return self.tryVisitList(ctx.scriptMemberDeclaration())
@@ -69,17 +79,30 @@ class ScriptVisitor(ScriptParserVisitor):
             ctx.callbackDeclaration()
         )
 
-    def visitCallbackDeclaration(self, ctx:ScriptParser.CallbackDeclarationContext):
+    def visitCallbackDeclaration(self, ctx: ScriptParser.CallbackDeclarationContext):
         return CallbackDeclarationNode(self.visit(ctx.simpleIdentifier()), self.visit(ctx.functionBody()))
 
     def visitPropertyDeclaration(self, ctx: ScriptParser.PropertyDeclarationContext):
         return PropertyDeclarationNode(
             self.tryVisit(ctx.modifierList(), []),
-            ctx.VAR() is not None,
+            (ctx.VAR() or ctx.VAL() or ctx.PIT()).getText(),
             self.visit(ctx.simpleIdentifier()),
             self.tryVisit(ctx.expression()),
             self.tryVisit(ctx.getter()),
             self.tryVisit(ctx.setter())
+        )
+
+    def visitGetter(self, ctx: ScriptParser.GetterContext):
+        return GetterNode(
+            self.tryVisit(ctx.modifierList(), []),
+            self.tryVisit(ctx.functionBody())
+        )
+
+    def visitSetter(self, ctx: ScriptParser.SetterContext):
+        return SetterNode(
+            self.tryVisit(ctx.modifierList(), []),
+            self.tryVisit(ctx.simpleIdentifier()),
+            self.tryVisit(ctx.functionBody())
         )
 
     def visitConstantDeclaration(self, ctx: ScriptParser.ConstantDeclarationContext):
@@ -90,7 +113,7 @@ class ScriptVisitor(ScriptParserVisitor):
         )
 
     def visitFunctionDeclaration(self, ctx: ScriptParser.FunctionDeclarationContext):
-        return FunctionNode(
+        return FunctionDeclarationNode(
             self.tryVisit(ctx.modifierList(), []),
             self.tryVisit(ctx.userType()),
             self.visit(ctx.simpleIdentifier()),
@@ -123,7 +146,7 @@ class ScriptVisitor(ScriptParserVisitor):
         return self.tryVisitList(ctx.statement())
 
     def visitStatement(self, ctx: ScriptParser.StatementContext):
-        return self.visit(ctx.declaration() or ctx.expression())
+        return self.visit(ctx.expression())
 
     def visitDeclaration(self, ctx: ScriptParser.DeclarationContext):
         return self.visit(ctx.functionDeclaration() or ctx.propertyDeclaration() or ctx.constantDeclaration())

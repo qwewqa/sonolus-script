@@ -22,8 +22,9 @@ class SimpleIdentifierNode:
 
 
 class ScriptDeclarationNode:
-    def __init__(self, identifier, body):
+    def __init__(self, identifier, parameters, body):
         self.identifier = identifier
+        self.parameters = parameters
         self.body = body
 
 
@@ -42,13 +43,26 @@ class CallbackDeclarationNode:
 
 
 class PropertyDeclarationNode:
-    def __init__(self, modifiers, writable, identifier, expression, getter, setter):
+    def __init__(self, modifiers, variant, identifier, expression, getter, setter):
         self.modifiers = modifiers
-        self.writable = writable
+        self.variant = variant
         self.identifier = identifier
         self.expression = expression
         self.getter = getter
         self.setter = setter
+
+
+class GetterNode:
+    def __init__(self, modifiers, body):
+        self.modifiers = modifiers
+        self.body = body
+
+
+class SetterNode:
+    def __init__(self, modifiers, parameter_name, body):
+        self.modifiers = modifiers
+        self.parameter_name = parameter_name
+        self.body = body
 
 
 class ConstantDeclarationNode:
@@ -110,7 +124,7 @@ class WhileExpressionNode:
         self.body = body
 
 
-class FunctionNode:
+class FunctionDeclarationNode:
     def __init__(self, modifiers, receiver, identifier, parameters, body):
         self.modifiers = modifiers
         self.receiver = receiver

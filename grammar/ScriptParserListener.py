@@ -98,6 +98,24 @@ class ScriptParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by ScriptParser#scriptParameters.
+    def enterScriptParameters(self, ctx:ScriptParser.ScriptParametersContext):
+        pass
+
+    # Exit a parse tree produced by ScriptParser#scriptParameters.
+    def exitScriptParameters(self, ctx:ScriptParser.ScriptParametersContext):
+        pass
+
+
+    # Enter a parse tree produced by ScriptParser#scriptParameter.
+    def enterScriptParameter(self, ctx:ScriptParser.ScriptParameterContext):
+        pass
+
+    # Exit a parse tree produced by ScriptParser#scriptParameter.
+    def exitScriptParameter(self, ctx:ScriptParser.ScriptParameterContext):
+        pass
+
+
     # Enter a parse tree produced by ScriptParser#scriptBody.
     def enterScriptBody(self, ctx:ScriptParser.ScriptBodyContext):
         pass

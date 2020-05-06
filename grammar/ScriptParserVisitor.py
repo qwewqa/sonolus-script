@@ -59,6 +59,16 @@ class ScriptParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ScriptParser#scriptParameters.
+    def visitScriptParameters(self, ctx:ScriptParser.ScriptParametersContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ScriptParser#scriptParameter.
+    def visitScriptParameter(self, ctx:ScriptParser.ScriptParameterContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ScriptParser#scriptBody.
     def visitScriptBody(self, ctx:ScriptParser.ScriptBodyContext):
         return self.visitChildren(ctx)

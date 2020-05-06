@@ -5,8 +5,8 @@ STD_FILENAMES = {
 }
 
 BUILTINS = {
-    'Execute': 'Alloc',
-    'If': 'Alloc',
+    'Execute': 'Raw',
+    'If': 'Raw',
     'Add': 'Number',
     'Subtract': 'Number',
     'Multiply': 'Number',
@@ -51,6 +51,26 @@ BUILTINS = {
     'UnlerpClamped': 'Number',
     'Remap': 'Number',
     'Smoothstep': 'Number',
-    'Get': 'Alloc',
+    'Get': 'Raw',
     'Set': 'None'
+}
+
+OPERATORS = {
+    '+': 'plus',
+    '-': 'minus',
+    '*': 'mul',
+    '/': 'div',
+    '%': 'mod',
+    '**': 'pow',
+    '==': 'eq',
+    '!=': 'neq',
+    '>': 'gt',
+    '>=': 'geq',
+    '<': 'lt',
+    '<=': 'leq',
+    'u-': 'neg',
+    'u+': 'pos',
+    'u!': 'not',
+    '||': 'or',
+    '&&': 'and'
 }

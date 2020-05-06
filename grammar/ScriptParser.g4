@@ -48,7 +48,16 @@ structField
 
 scriptDeclaration
     : SCRIPT NL* simpleIdentifier
+    scriptParameters
     NL* scriptBody
+    ;
+
+scriptParameters
+    : LPAREN (scriptParameter (COMMA scriptParameter)*)? RPAREN
+    ;
+
+scriptParameter
+    : simpleIdentifier
     ;
 
 scriptBody
@@ -63,7 +72,7 @@ scriptMemberDeclaration
     ;
 
 propertyDeclaration
-    : modifierList? (VAR | VAL)
+    : modifierList? (VAR | VAL | PIT)
     simpleIdentifier
     (NL* (ASSIGNMENT) NL* expression)?
     (NL* semi? NL* (getter (semi setter)? | setter (semi getter)?))?
@@ -104,8 +113,8 @@ statements
     ;
 
 statement
-    : declaration
-    | expression
+    : expression
+//    | declaration
     ;
 
 declaration
@@ -116,12 +125,12 @@ declaration
 
 getter
     : modifierList? GETTER
-    | modifierList? GETTER NL* LPAREN RPAREN (NL* COLON NL* userType)? NL* functionBody
+    | modifierList? GETTER NL* LPAREN RPAREN NL* functionBody
     ;
 
 setter
     : modifierList? SETTER
-    | modifierList? SETTER NL* LPAREN (simpleIdentifier | parameter) RPAREN NL* functionBody
+    | modifierList? SETTER NL* LPAREN simpleIdentifier RPAREN NL* functionBody
     ;
 
 constantDeclaration
