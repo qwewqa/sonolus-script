@@ -89,6 +89,11 @@ class ScriptParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ScriptParser#callbackOrder.
+    def visitCallbackOrder(self, ctx:ScriptParser.CallbackOrderContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ScriptParser#functionDeclaration.
     def visitFunctionDeclaration(self, ctx:ScriptParser.FunctionDeclarationContext):
         return self.visitChildren(ctx)

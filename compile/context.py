@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import os
 import os.path
 import pathlib
+from typing import Optional
 
 from antlr4 import *
 
@@ -11,10 +14,11 @@ from visitor.visitor import ScriptVisitor
 
 
 class Context:
-    def __init__(self, parent=None):
+    def __init__(self, parent: Optional[Context] = None):
         self.parent = parent
         self.symbols = {}
         self.native_symbols = {}
+        self.imported = set()
 
     def add(self, name, signature, value, native=True):
         if name not in self.symbols:
@@ -27,7 +31,15 @@ class Context:
                 self.native_symbols[name] = {}
             self.native_symbols[name][signature] = value
 
+    def add_global(self, name, signature, value):
+        if self.parent:
+            self.parent.add_global(name, signature, value)
+        else:
+            self.add(name, signature, value)
+
     def import_context(self, context):
+        if context in self.imported or context is self:
+            return
         for name, values in context.native_symbols.items():
             if name not in self.symbols:
                 self.symbols[name] = {}
@@ -35,11 +47,38 @@ class Context:
                 if hasattr(value, 'modifiers') and 'private' in value.modifiers:
                     continue
                 self.add(name, signature, value, False)
+        self.imported.add(context)
+
+    def find_all_direct(self, name=None, signature=None):
+        if name:
+            return [s[1] for s in
+                    self.symbols.get(name, {}).items() if s[0] == signature]
+        elif signature:
+            return [s[1] for s in
+                    [(v, r) for v in self.symbols.values() for r in v.values()] if s[0] == signature]
+        else:
+            return [r for v in self.symbols.values() for r in v.values()]
+
+    def find_direct(self, name, signature=None):
+        r = self.find_all_direct(name, signature)
+        return (r and r[0]) or None
+
+    def find_all(self, name=None, signature=None):
+        if name:
+            return [s[1] for s in
+                    self.symbols.get(name, {}).items() if s[0] == signature] + (
+                           self.parent and self.parent.find_all(name, signature) or [])
+        elif signature:
+            return [s[1] for s in
+                    [(v, r) for v in self.symbols.values() for r in v.values()] if s[0] == signature] + (
+                           self.parent and self.parent.find_all(name, signature) or [])
+        else:
+            return [r for v in self.symbols.values() for r in v.values()] + (
+                    self.parent and self.parent.find_all(name, signature) or [])
 
     def find(self, name, signature=None):
-        return [s[1] for s in
-                self.symbols.get(name, {}).items() if s[0] == signature] + (
-                   self.parent and self.parent.find(name, signature) or [])
+        r = self.find_all(name, signature)
+        return (r and r[0]) or None
 
 
 def read_script(path):
@@ -55,35 +94,25 @@ class GlobalContext(Context):
     def __init__(self, path):
         super().__init__()
 
-        self.initializing = True
         self.path = pathlib.Path(__file__).parent.parent.joinpath("./std")
         for filename in STD_FILENAMES:
             self.get(filename)
         self.path = path
-        self.initializing = False
 
     def get(self, name):
         if name[-4:] == '.scc':
             name = name[:-4]
-        if name not in self.symbols or () not in self.symbols[name]:
+        if name not in self.symbols or None not in self.symbols[name]:
             from compile.declaration import ScriptFile
-            self.add(name, (),
-                     ScriptFile(read_script(os.path.join(self.path, f'{name}.ssc')), self, not self.initializing))
-        return self.symbols[name][()]
-
-    def new_file_context(self):
-        return FileContext(self)
+            script = ScriptFile(read_script(os.path.join(self.path, f'{name}.ssc')), self)
+            self.add(name, None, script)
+            script.process_imports()
+        return self.find(name, None)
 
 
 class FileContext(Context):
     def __init__(self, parent):
         super().__init__(parent)
-
-    def new_script_context(self):
-        return ScriptContext(self)
-
-    def new_struct_context(self):
-        return StructContext(self)
 
     def import_script(self, script):
         self.import_context(script.context)
@@ -99,6 +128,8 @@ class ScriptContext(Context):
         self.entity_data = BlockAllocator(22, 32)
         self.entity_memory = BlockAllocator(21, 64)
         self.entity_shared_memory = BlockAllocator(24, 32)
+        self.allocator = self.entity_memory
+        self.shared_allocator = self.entity_shared_memory
 
     def new_callback_context(self):
         return CallbackContext(self)
@@ -108,10 +139,23 @@ class CallbackContext(Context):
     def __init__(self, parent):
         super().__init__(parent)
         self.temporary_memory = BlockAllocator(100, 16)
+        self.allocator = self.temporary_memory
 
 
 class FunctionContext(Context):
-    pass
+    def __init__(self, parent):
+        super().__init__(parent)
+
+
+class FunctionInvocationContext(Context):
+    def __init__(self, parent: Context):
+        super().__init__(parent)
+        if isinstance(parent, CallbackContext):
+            self.allocator = parent.temporary_memory
+        elif isinstance(parent, FunctionInvocationContext):
+            self.allocator = parent.allocator
+        else:
+            self.allocator = None
 
 
 class BlockAllocator:

@@ -14,16 +14,21 @@ const blah = (23.4)
 const comp = 10 * (234.5 - 34)**2 > 5.0 && 5.4 > 3.0 || 3.0 > 45.1 - -5 + -4 - 3 && (true || false)
 
 struct Point(x: Number, y: Number) {
-    const c = 10 * (234.5 - 34)**2 > 5.0 && 5.4 > 3.0 || 3.0 > 45.1 - -5 + -4 - 3 && (true || false)
-
     fun translate(x: Number, y: Number) {
-        this.x += x
-        this.y += y
+        this.x = this.x + x
+        this.y = this.y + y
+    }
+
+    fun makeTall() {
+        if (x > y) {
+            x swapWith y
+        }
+        this
     }
 
     fun scale(factor: Number) {
-        x *= factor
-        y *= factor
+        x = x * factor
+        y = y * factor
     }
 
     operator fun scaled(factor: Number) {
@@ -40,9 +45,13 @@ script Foo() {
     shared var c = 10
 
     callback touch {
-        foo(x, y)
-        hi()
-        0
+        val pt get() { Point(x, y) }
+        pt.makeTall().scale(2)
+        Point(y, x).makeTall()
+    }
+
+    callback updateSequential {
+
     }
 
     fun hi() {
@@ -56,7 +65,7 @@ fun foo(x, y) {
     }
 }
 
-script test(
+script Note(
     startX,
     startY
 ) {

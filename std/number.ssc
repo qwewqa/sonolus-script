@@ -1,50 +1,50 @@
 struct Number(value: Raw) {
     operator fun plus(other: Number) {
-        Add(value,  other.value)
+        Number(Add(value,  other.value))
     }
 
     operator fun minus(other: Number) {
-        Subtract(value, other.value)
+        Number(Subtract(value, other.value))
     }
 
     operator fun mul(other: Number) {
-        Multiply(value, other.value)
+        Number(Multiply(value, other.value))
     }
 
     operator fun div(other: Number) {
-        Divide(value, other.value)
+        Number(Divide(value, other.value))
     }
 
     operator fun mod(other: Number) {
-        Mod(value, other.value)
+        Number(Mod(value, other.value))
     }
 
     operator fun pow(other: Number) {
-        Power(value, other.value)
+        Number(Power(value, other.value))
     }
 
     operator fun eq(other: Number) {
-        Equal(value, other.value)
+        Boolean(Equal(value, other.value))
     }
 
     operator fun neq(other: Number) {
-        NotEqual(value, other.value)
+        Boolean(NotEqual(value, other.value))
     }
 
     operator fun gt(other: Number) {
-        Greater(value, other.value)
+        Boolean(Greater(value, other.value))
     }
 
     operator fun geq(other: Number) {
-        GreaterOr(value, other.value)
+        Boolean(GreaterOr(value, other.value))
     }
 
     operator fun lt(other: Number) {
-        Less(value, other.value)
+        Boolean(Less(value, other.value))
     }
 
     operator fun leq(other: Number) {
-        LessOr(value, other.value)
+        Boolean(LessOr(value, other.value))
     }
 
     operator fun neg() {
@@ -56,38 +56,48 @@ struct Number(value: Raw) {
     }
 
     fun log() {
-        Log(value)
+        Number(Log(value))
     }
 
     fun abs() {
-        Abs(value)
+        Number(Abs(value))
     }
 
     fun sign() {
-        Sign(value)
+        Number(Sign(value))
     }
 
     fun ceil() {
-        Ceil(value)
+        Number(Ceil(value))
     }
 
     fun floor() {
-        Floor(value)
+        Number(Floor(value))
     }
 
     fun round() {
-        Round(value)
+        Number(Round(value))
     }
 
     fun fpart() {
-        Frac(value)
+        Number(Frac(value))
     }
 
     fun ipart() {
-        Trunc(value)
+        Number(Trunc(value))
     }
 
     val percent get() { this / 100 }
-    val deg get() { Degree(value) }
-    val rad get() { Radian(value) }
+    val deg get() { Number(Degree(value)) }
+    val rad get() { Number(Radian(value)) }
+
+    operator fun swapWith(other: Number) {
+        swap(this, other)
+    }
+}
+
+fun swap(x: Number, y: Number) {
+    x = x + y
+    y = x - y
+    x = x - y
 }

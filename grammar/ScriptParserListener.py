@@ -152,6 +152,15 @@ class ScriptParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by ScriptParser#callbackOrder.
+    def enterCallbackOrder(self, ctx:ScriptParser.CallbackOrderContext):
+        pass
+
+    # Exit a parse tree produced by ScriptParser#callbackOrder.
+    def exitCallbackOrder(self, ctx:ScriptParser.CallbackOrderContext):
+        pass
+
+
     # Enter a parse tree produced by ScriptParser#functionDeclaration.
     def enterFunctionDeclaration(self, ctx:ScriptParser.FunctionDeclarationContext):
         pass

@@ -37,7 +37,8 @@ class StructDeclarationNode:
 
 
 class CallbackDeclarationNode:
-    def __init__(self, identifier, body):
+    def __init__(self, order, identifier, body):
+        self.order = order
         self.identifier = identifier
         self.body = body
 

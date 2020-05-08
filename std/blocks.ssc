@@ -1,5 +1,3 @@
-import number
-
 struct BlockAccessor(
     const id: Number
 ) {

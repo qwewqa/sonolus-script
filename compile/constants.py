@@ -1,7 +1,8 @@
 STD_FILENAMES = {
     'blocks',
     'number',
-    'boolean'
+    'boolean',
+    'other'
 }
 
 BUILTINS = {
@@ -72,5 +73,5 @@ OPERATORS = {
     'u+': 'pos',
     'u!': 'not',
     '||': 'or',
-    '&&': 'and'
+    '&&': 'and',
 }

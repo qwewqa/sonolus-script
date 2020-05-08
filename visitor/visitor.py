@@ -62,10 +62,10 @@ class ScriptVisitor(ScriptParserVisitor):
             self.visit(ctx.scriptBody())
         )
 
-    def visitScriptParameters(self, ctx:ScriptParser.ScriptParametersContext):
+    def visitScriptParameters(self, ctx: ScriptParser.ScriptParametersContext):
         return self.tryVisitList(ctx.scriptParameter())
 
-    def visitScriptParameter(self, ctx:ScriptParser.ScriptParameterContext):
+    def visitScriptParameter(self, ctx: ScriptParser.ScriptParameterContext):
         return self.visit(ctx.simpleIdentifier())
 
     def visitScriptBody(self, ctx: ScriptParser.ScriptBodyContext):
@@ -80,7 +80,13 @@ class ScriptVisitor(ScriptParserVisitor):
         )
 
     def visitCallbackDeclaration(self, ctx: ScriptParser.CallbackDeclarationContext):
-        return CallbackDeclarationNode(self.visit(ctx.simpleIdentifier()), self.visit(ctx.functionBody()))
+        return CallbackDeclarationNode(self.tryVisit(ctx.callbackOrder()), self.visit(ctx.simpleIdentifier()), self.visit(ctx.functionBody()))
+
+    def visitCallbackOrder(self, ctx:ScriptParser.CallbackOrderContext):
+        if ctx.IntegerLiteral():
+            return NumberLiteralNode(float(ctx.IntegerLiteral().getText()))
+        else:
+            return self.visit(ctx.simpleIdentifier())
 
     def visitPropertyDeclaration(self, ctx: ScriptParser.PropertyDeclarationContext):
         return PropertyDeclarationNode(
@@ -146,10 +152,11 @@ class ScriptVisitor(ScriptParserVisitor):
         return self.tryVisitList(ctx.statement())
 
     def visitStatement(self, ctx: ScriptParser.StatementContext):
-        return self.visit(ctx.expression())
+        return self.visit(ctx.expression() or ctx.declaration())
 
     def visitDeclaration(self, ctx: ScriptParser.DeclarationContext):
-        return self.visit(ctx.functionDeclaration() or ctx.propertyDeclaration() or ctx.constantDeclaration())
+        return self.visit(ctx.functionDeclaration() or ctx.propertyDeclaration()
+                          or ctx.constantDeclaration() or ctx.structDeclaration())
 
     def visitExpression(self, ctx: ScriptParser.ExpressionContext):
         return self.visitGenericInfixExpression(ctx, right_associative=True)
@@ -180,9 +187,9 @@ class ScriptVisitor(ScriptParserVisitor):
 
     def visitPrefixUnaryExpression(self, ctx: ScriptParser.PrefixUnaryExpressionContext):
         children = [c for c in ctx.getChildren()]
-        expr = self.visit(children.pop())
+        expr = self.visit(children.pop(0))
         while children:
-            expr = UnaryExpressionNode(expr, children.pop().getText())
+            expr = UnaryExpressionNode(expr, children.pop(0).getText())  # think
         return expr
 
     def visitPostfixUnaryExpression(self, ctx: ScriptParser.PostfixUnaryExpressionContext):
@@ -196,7 +203,7 @@ class ScriptVisitor(ScriptParserVisitor):
         if ctx.callSuffix():
             return self.visit(ctx.callSuffix())
         elif ctx.memberAccessOperator():
-            return MemberAccessNode(self.visit(ctx.postfixUnaryExpression()))
+            return MemberAccessNode(self.visit(ctx.simpleIdentifier()))
         else:
             return ctx.getText()
 

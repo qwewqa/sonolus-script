@@ -80,8 +80,14 @@ propertyDeclaration
 
 callbackDeclaration
     : CALLBACK
+    (AT callbackOrder)?
     NL* simpleIdentifier
     NL* functionBody
+    ;
+
+callbackOrder
+    : IntegerLiteral
+    | simpleIdentifier
     ;
 
 functionDeclaration
@@ -114,13 +120,14 @@ statements
 
 statement
     : expression
-//    | declaration
+    | declaration
     ;
 
 declaration
     : functionDeclaration
     | propertyDeclaration
     | constantDeclaration
+    | structDeclaration
     ;
 
 getter
@@ -296,7 +303,7 @@ prefixUnaryOperation
 postfixUnaryOperation
     : INCR | DECR | EXCL EXCL
     | callSuffix
-    | NL* memberAccessOperator postfixUnaryExpression
+    | NL* memberAccessOperator simpleIdentifier
     ;
 
 memberAccessOperator
