@@ -279,7 +279,7 @@ modifier
     | SHARED
     | STATIC
     | OPERATOR
-    | DATA
+    | INLINE
     | SPAWNINIT) NL*
     ;
 
@@ -289,8 +289,8 @@ identifier
 
 simpleIdentifier
     : Identifier
-    //soft keywords:
-    | DATA
+    | SPAWNINIT
+    | INLINE
     | GETTER
     | IMPORT
     | OPERATOR
@@ -298,7 +298,6 @@ simpleIdentifier
     | PUBLIC
     | SETTER
     | ARCHETYPE
-    //strong keywords
     | CONST
     ;
 

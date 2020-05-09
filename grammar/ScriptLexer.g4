@@ -91,7 +91,7 @@ PRIVATE: 'private' ;
 SHARED: 'shared' ;
 STATIC: 'static' ;
 OPERATOR: 'operator' ;
-DATA: 'data' ;
+INLINE: 'inline' ;
 SPAWNINIT: 'spawninit' ;
 
 //
@@ -180,14 +180,19 @@ Inside_SINGLE_QUOTE: SINGLE_QUOTE  -> type(SINGLE_QUOTE) ;
 
 Inside_VAL: VAL -> type(VAL) ;
 Inside_VAR: VAR -> type(VAR) ;
+Inside_PIT: PIT -> type(PIT) ;
+Inside_CONST: CONST -> type(CONST) ;
 Inside_IF: IF -> type(IF) ;
 Inside_ELSE: ELSE -> type(ELSE) ;
 Inside_WHILE: WHILE -> type(WHILE) ;
 
 Inside_PUBLIC: PUBLIC -> type(PUBLIC) ;
 Inside_PRIVATE: PRIVATE -> type(PRIVATE) ;
-Inside_DATA: DATA -> type(DATA) ;
-Inside_CONST: CONST -> type(CONST) ;
+Inside_SHARED: SHARED -> type(SHARED) ;
+Inside_STATIC: STATIC -> type(STATIC) ;
+Inside_OPERATOR: OPERATOR -> type(OPERATOR) ;
+Inside_INLINE: INLINE -> type(INLINE) ;
+Inside_SPAWNINIT: SPAWNINIT-> type(SPAWNINIT) ;
 
 Inside_BooleanLiteral: BooleanLiteral -> type(BooleanLiteral) ;
 Inside_IntegerLiteral: IntegerLiteral -> type(IntegerLiteral) ;

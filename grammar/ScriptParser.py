@@ -112,7 +112,7 @@ def serializedATN():
         buf.write("\nG\3H\3H\3H\2\2I\2\4\6\b\n\f\16\20\22\24\26\30\32\34")
         buf.write("\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjln")
         buf.write("prtvxz|~\u0080\u0082\u0084\u0086\u0088\u008a\u008c\u008e")
-        buf.write("\2\r\3\29;\3\2BH\t\2\61\61\66\6688?@BCFGLL\3\2IK\3\2\23")
+        buf.write("\2\r\3\29;\3\2BH\t\2\61\61\66\6688?@BCFHLL\3\2IK\3\2\23")
         buf.write("\24\4\2\17\17\21\22\4\2\23\26\31\31\3\2\35\"\3\2./\3\2")
         buf.write("*-\4\2\6\6\34\34\2\u040a\2\u0093\3\2\2\2\4\u00b2\3\2\2")
         buf.write("\2\6\u00b5\3\2\2\2\b\u00c1\3\2\2\2\n\u00c3\3\2\2\2\f\u00c6")
@@ -520,7 +520,7 @@ class ScriptParser ( Parser ):
                      "'callback'", "'archetype'", "'levelvar'", "'const'", 
                      "'var'", "'val'", "'pit'", "'if'", "'else'", "'while'", 
                      "'get'", "'set'", "'as'", "'public'", "'private'", 
-                     "'shared'", "'static'", "'operator'", "'data'", "'spawninit'" ]
+                     "'shared'", "'static'", "'operator'", "'inline'", "'spawninit'" ]
 
     symbolicNames = [ "<INVALID>", "DelimitedComment", "LineComment", "WS", 
                       "NL", "DOT", "COMMA", "LPAREN", "RPAREN", "LSQUARE", 
@@ -534,7 +534,7 @@ class ScriptParser ( Parser ):
                       "IMPORT", "STRUCT", "FUN", "SCRIPT", "CALLBACK", "ARCHETYPE", 
                       "LEVELVAR", "CONST", "VAR", "VAL", "PIT", "IF", "ELSE", 
                       "WHILE", "GETTER", "SETTER", "AS", "PUBLIC", "PRIVATE", 
-                      "SHARED", "STATIC", "OPERATOR", "DATA", "SPAWNINIT", 
+                      "SHARED", "STATIC", "OPERATOR", "INLINE", "SPAWNINIT", 
                       "FloatLiteral", "IntegerLiteral", "BooleanLiteral", 
                       "Identifier", "UNICODE_CLASS_LL", "UNICODE_CLASS_LM", 
                       "UNICODE_CLASS_LO", "UNICODE_CLASS_LT", "UNICODE_CLASS_LU", 
@@ -705,7 +705,7 @@ class ScriptParser ( Parser ):
     SHARED=66
     STATIC=67
     OPERATOR=68
-    DATA=69
+    INLINE=69
     SPAWNINIT=70
     FloatLiteral=71
     IntegerLiteral=72
@@ -817,7 +817,7 @@ class ScriptParser ( Parser ):
             self.state = 169
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if ((((_la - 48)) & ~0x3f) == 0 and ((1 << (_la - 48)) & ((1 << (ScriptParser.STRUCT - 48)) | (1 << (ScriptParser.FUN - 48)) | (1 << (ScriptParser.SCRIPT - 48)) | (1 << (ScriptParser.ARCHETYPE - 48)) | (1 << (ScriptParser.LEVELVAR - 48)) | (1 << (ScriptParser.CONST - 48)) | (1 << (ScriptParser.VAR - 48)) | (1 << (ScriptParser.VAL - 48)) | (1 << (ScriptParser.PIT - 48)) | (1 << (ScriptParser.PUBLIC - 48)) | (1 << (ScriptParser.PRIVATE - 48)) | (1 << (ScriptParser.SHARED - 48)) | (1 << (ScriptParser.STATIC - 48)) | (1 << (ScriptParser.OPERATOR - 48)) | (1 << (ScriptParser.DATA - 48)) | (1 << (ScriptParser.SPAWNINIT - 48)))) != 0):
+            if ((((_la - 48)) & ~0x3f) == 0 and ((1 << (_la - 48)) & ((1 << (ScriptParser.STRUCT - 48)) | (1 << (ScriptParser.FUN - 48)) | (1 << (ScriptParser.SCRIPT - 48)) | (1 << (ScriptParser.ARCHETYPE - 48)) | (1 << (ScriptParser.LEVELVAR - 48)) | (1 << (ScriptParser.CONST - 48)) | (1 << (ScriptParser.VAR - 48)) | (1 << (ScriptParser.VAL - 48)) | (1 << (ScriptParser.PIT - 48)) | (1 << (ScriptParser.PUBLIC - 48)) | (1 << (ScriptParser.PRIVATE - 48)) | (1 << (ScriptParser.SHARED - 48)) | (1 << (ScriptParser.STATIC - 48)) | (1 << (ScriptParser.OPERATOR - 48)) | (1 << (ScriptParser.INLINE - 48)) | (1 << (ScriptParser.SPAWNINIT - 48)))) != 0):
                 self.state = 155
                 self.topLevelObject()
                 self.state = 166
@@ -841,7 +841,7 @@ class ScriptParser ( Parser ):
                     self.state = 162
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    if ((((_la - 48)) & ~0x3f) == 0 and ((1 << (_la - 48)) & ((1 << (ScriptParser.STRUCT - 48)) | (1 << (ScriptParser.FUN - 48)) | (1 << (ScriptParser.SCRIPT - 48)) | (1 << (ScriptParser.ARCHETYPE - 48)) | (1 << (ScriptParser.LEVELVAR - 48)) | (1 << (ScriptParser.CONST - 48)) | (1 << (ScriptParser.VAR - 48)) | (1 << (ScriptParser.VAL - 48)) | (1 << (ScriptParser.PIT - 48)) | (1 << (ScriptParser.PUBLIC - 48)) | (1 << (ScriptParser.PRIVATE - 48)) | (1 << (ScriptParser.SHARED - 48)) | (1 << (ScriptParser.STATIC - 48)) | (1 << (ScriptParser.OPERATOR - 48)) | (1 << (ScriptParser.DATA - 48)) | (1 << (ScriptParser.SPAWNINIT - 48)))) != 0):
+                    if ((((_la - 48)) & ~0x3f) == 0 and ((1 << (_la - 48)) & ((1 << (ScriptParser.STRUCT - 48)) | (1 << (ScriptParser.FUN - 48)) | (1 << (ScriptParser.SCRIPT - 48)) | (1 << (ScriptParser.ARCHETYPE - 48)) | (1 << (ScriptParser.LEVELVAR - 48)) | (1 << (ScriptParser.CONST - 48)) | (1 << (ScriptParser.VAR - 48)) | (1 << (ScriptParser.VAL - 48)) | (1 << (ScriptParser.PIT - 48)) | (1 << (ScriptParser.PUBLIC - 48)) | (1 << (ScriptParser.PRIVATE - 48)) | (1 << (ScriptParser.SHARED - 48)) | (1 << (ScriptParser.STATIC - 48)) | (1 << (ScriptParser.OPERATOR - 48)) | (1 << (ScriptParser.INLINE - 48)) | (1 << (ScriptParser.SPAWNINIT - 48)))) != 0):
                         self.state = 161
                         self.topLevelObject()
 
@@ -1373,7 +1373,7 @@ class ScriptParser ( Parser ):
             self.state = 234
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if ((((_la - 47)) & ~0x3f) == 0 and ((1 << (_la - 47)) & ((1 << (ScriptParser.IMPORT - 47)) | (1 << (ScriptParser.ARCHETYPE - 47)) | (1 << (ScriptParser.CONST - 47)) | (1 << (ScriptParser.GETTER - 47)) | (1 << (ScriptParser.SETTER - 47)) | (1 << (ScriptParser.PUBLIC - 47)) | (1 << (ScriptParser.PRIVATE - 47)) | (1 << (ScriptParser.OPERATOR - 47)) | (1 << (ScriptParser.DATA - 47)) | (1 << (ScriptParser.Identifier - 47)))) != 0):
+            if ((((_la - 47)) & ~0x3f) == 0 and ((1 << (_la - 47)) & ((1 << (ScriptParser.IMPORT - 47)) | (1 << (ScriptParser.ARCHETYPE - 47)) | (1 << (ScriptParser.CONST - 47)) | (1 << (ScriptParser.GETTER - 47)) | (1 << (ScriptParser.SETTER - 47)) | (1 << (ScriptParser.PUBLIC - 47)) | (1 << (ScriptParser.PRIVATE - 47)) | (1 << (ScriptParser.OPERATOR - 47)) | (1 << (ScriptParser.INLINE - 47)) | (1 << (ScriptParser.SPAWNINIT - 47)) | (1 << (ScriptParser.Identifier - 47)))) != 0):
                 self.state = 226
                 self.archetypeDefault()
                 self.state = 231
@@ -1520,7 +1520,7 @@ class ScriptParser ( Parser ):
             self.state = 243
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
+            if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
                 self.state = 242
                 self.modifierList()
 
@@ -1630,7 +1630,7 @@ class ScriptParser ( Parser ):
             self.state = 272
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while ((((_la - 49)) & ~0x3f) == 0 and ((1 << (_la - 49)) & ((1 << (ScriptParser.FUN - 49)) | (1 << (ScriptParser.CONST - 49)) | (1 << (ScriptParser.VAR - 49)) | (1 << (ScriptParser.VAL - 49)) | (1 << (ScriptParser.PIT - 49)) | (1 << (ScriptParser.PUBLIC - 49)) | (1 << (ScriptParser.PRIVATE - 49)) | (1 << (ScriptParser.SHARED - 49)) | (1 << (ScriptParser.STATIC - 49)) | (1 << (ScriptParser.OPERATOR - 49)) | (1 << (ScriptParser.DATA - 49)) | (1 << (ScriptParser.SPAWNINIT - 49)))) != 0):
+            while ((((_la - 49)) & ~0x3f) == 0 and ((1 << (_la - 49)) & ((1 << (ScriptParser.FUN - 49)) | (1 << (ScriptParser.CONST - 49)) | (1 << (ScriptParser.VAR - 49)) | (1 << (ScriptParser.VAL - 49)) | (1 << (ScriptParser.PIT - 49)) | (1 << (ScriptParser.PUBLIC - 49)) | (1 << (ScriptParser.PRIVATE - 49)) | (1 << (ScriptParser.SHARED - 49)) | (1 << (ScriptParser.STATIC - 49)) | (1 << (ScriptParser.OPERATOR - 49)) | (1 << (ScriptParser.INLINE - 49)) | (1 << (ScriptParser.SPAWNINIT - 49)))) != 0):
                 self.state = 269
                 self.structMemberDeclaration()
                 self.state = 274
@@ -1805,7 +1805,7 @@ class ScriptParser ( Parser ):
             self.state = 303
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if ((((_la - 47)) & ~0x3f) == 0 and ((1 << (_la - 47)) & ((1 << (ScriptParser.IMPORT - 47)) | (1 << (ScriptParser.ARCHETYPE - 47)) | (1 << (ScriptParser.CONST - 47)) | (1 << (ScriptParser.GETTER - 47)) | (1 << (ScriptParser.SETTER - 47)) | (1 << (ScriptParser.PUBLIC - 47)) | (1 << (ScriptParser.PRIVATE - 47)) | (1 << (ScriptParser.OPERATOR - 47)) | (1 << (ScriptParser.DATA - 47)) | (1 << (ScriptParser.Identifier - 47)))) != 0):
+            if ((((_la - 47)) & ~0x3f) == 0 and ((1 << (_la - 47)) & ((1 << (ScriptParser.IMPORT - 47)) | (1 << (ScriptParser.ARCHETYPE - 47)) | (1 << (ScriptParser.CONST - 47)) | (1 << (ScriptParser.GETTER - 47)) | (1 << (ScriptParser.SETTER - 47)) | (1 << (ScriptParser.PUBLIC - 47)) | (1 << (ScriptParser.PRIVATE - 47)) | (1 << (ScriptParser.OPERATOR - 47)) | (1 << (ScriptParser.INLINE - 47)) | (1 << (ScriptParser.SPAWNINIT - 47)) | (1 << (ScriptParser.Identifier - 47)))) != 0):
                 self.state = 295
                 self.structField()
                 self.state = 300
@@ -2050,7 +2050,7 @@ class ScriptParser ( Parser ):
             self.state = 340
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if ((((_la - 47)) & ~0x3f) == 0 and ((1 << (_la - 47)) & ((1 << (ScriptParser.IMPORT - 47)) | (1 << (ScriptParser.ARCHETYPE - 47)) | (1 << (ScriptParser.CONST - 47)) | (1 << (ScriptParser.GETTER - 47)) | (1 << (ScriptParser.SETTER - 47)) | (1 << (ScriptParser.PUBLIC - 47)) | (1 << (ScriptParser.PRIVATE - 47)) | (1 << (ScriptParser.OPERATOR - 47)) | (1 << (ScriptParser.DATA - 47)) | (1 << (ScriptParser.Identifier - 47)))) != 0):
+            if ((((_la - 47)) & ~0x3f) == 0 and ((1 << (_la - 47)) & ((1 << (ScriptParser.IMPORT - 47)) | (1 << (ScriptParser.ARCHETYPE - 47)) | (1 << (ScriptParser.CONST - 47)) | (1 << (ScriptParser.GETTER - 47)) | (1 << (ScriptParser.SETTER - 47)) | (1 << (ScriptParser.PUBLIC - 47)) | (1 << (ScriptParser.PRIVATE - 47)) | (1 << (ScriptParser.OPERATOR - 47)) | (1 << (ScriptParser.INLINE - 47)) | (1 << (ScriptParser.SPAWNINIT - 47)) | (1 << (ScriptParser.Identifier - 47)))) != 0):
                 self.state = 332
                 self.scriptParameter()
                 self.state = 337
@@ -2193,7 +2193,7 @@ class ScriptParser ( Parser ):
             self.state = 356
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            while ((((_la - 49)) & ~0x3f) == 0 and ((1 << (_la - 49)) & ((1 << (ScriptParser.FUN - 49)) | (1 << (ScriptParser.CALLBACK - 49)) | (1 << (ScriptParser.CONST - 49)) | (1 << (ScriptParser.VAR - 49)) | (1 << (ScriptParser.VAL - 49)) | (1 << (ScriptParser.PIT - 49)) | (1 << (ScriptParser.PUBLIC - 49)) | (1 << (ScriptParser.PRIVATE - 49)) | (1 << (ScriptParser.SHARED - 49)) | (1 << (ScriptParser.STATIC - 49)) | (1 << (ScriptParser.OPERATOR - 49)) | (1 << (ScriptParser.DATA - 49)) | (1 << (ScriptParser.SPAWNINIT - 49)))) != 0):
+            while ((((_la - 49)) & ~0x3f) == 0 and ((1 << (_la - 49)) & ((1 << (ScriptParser.FUN - 49)) | (1 << (ScriptParser.CALLBACK - 49)) | (1 << (ScriptParser.CONST - 49)) | (1 << (ScriptParser.VAR - 49)) | (1 << (ScriptParser.VAL - 49)) | (1 << (ScriptParser.PIT - 49)) | (1 << (ScriptParser.PUBLIC - 49)) | (1 << (ScriptParser.PRIVATE - 49)) | (1 << (ScriptParser.SHARED - 49)) | (1 << (ScriptParser.STATIC - 49)) | (1 << (ScriptParser.OPERATOR - 49)) | (1 << (ScriptParser.INLINE - 49)) | (1 << (ScriptParser.SPAWNINIT - 49)))) != 0):
                 self.state = 353
                 self.scriptMemberDeclaration()
                 self.state = 358
@@ -2401,7 +2401,7 @@ class ScriptParser ( Parser ):
             self.state = 380
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
+            if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
                 self.state = 379
                 self.modifierList()
 
@@ -2671,7 +2671,7 @@ class ScriptParser ( Parser ):
                 self.state = 451
                 self.match(ScriptParser.IntegerLiteral)
                 pass
-            elif token in [ScriptParser.IMPORT, ScriptParser.ARCHETYPE, ScriptParser.CONST, ScriptParser.GETTER, ScriptParser.SETTER, ScriptParser.PUBLIC, ScriptParser.PRIVATE, ScriptParser.OPERATOR, ScriptParser.DATA, ScriptParser.Identifier]:
+            elif token in [ScriptParser.IMPORT, ScriptParser.ARCHETYPE, ScriptParser.CONST, ScriptParser.GETTER, ScriptParser.SETTER, ScriptParser.PUBLIC, ScriptParser.PRIVATE, ScriptParser.OPERATOR, ScriptParser.INLINE, ScriptParser.SPAWNINIT, ScriptParser.Identifier]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 452
                 self.simpleIdentifier()
@@ -2756,7 +2756,7 @@ class ScriptParser ( Parser ):
             self.state = 456
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
+            if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
                 self.state = 455
                 self.modifierList()
 
@@ -2895,7 +2895,7 @@ class ScriptParser ( Parser ):
             self.state = 507
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if ((((_la - 47)) & ~0x3f) == 0 and ((1 << (_la - 47)) & ((1 << (ScriptParser.IMPORT - 47)) | (1 << (ScriptParser.ARCHETYPE - 47)) | (1 << (ScriptParser.CONST - 47)) | (1 << (ScriptParser.GETTER - 47)) | (1 << (ScriptParser.SETTER - 47)) | (1 << (ScriptParser.PUBLIC - 47)) | (1 << (ScriptParser.PRIVATE - 47)) | (1 << (ScriptParser.OPERATOR - 47)) | (1 << (ScriptParser.DATA - 47)) | (1 << (ScriptParser.Identifier - 47)))) != 0):
+            if ((((_la - 47)) & ~0x3f) == 0 and ((1 << (_la - 47)) & ((1 << (ScriptParser.IMPORT - 47)) | (1 << (ScriptParser.ARCHETYPE - 47)) | (1 << (ScriptParser.CONST - 47)) | (1 << (ScriptParser.GETTER - 47)) | (1 << (ScriptParser.SETTER - 47)) | (1 << (ScriptParser.PUBLIC - 47)) | (1 << (ScriptParser.PRIVATE - 47)) | (1 << (ScriptParser.OPERATOR - 47)) | (1 << (ScriptParser.INLINE - 47)) | (1 << (ScriptParser.SPAWNINIT - 47)) | (1 << (ScriptParser.Identifier - 47)))) != 0):
                 self.state = 499
                 self.functionParameter()
                 self.state = 504
@@ -3134,7 +3134,7 @@ class ScriptParser ( Parser ):
             self.state = 539
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << ScriptParser.LPAREN) | (1 << ScriptParser.ADD) | (1 << ScriptParser.SUB) | (1 << ScriptParser.INCR) | (1 << ScriptParser.DECR) | (1 << ScriptParser.EXCL) | (1 << ScriptParser.IMPORT) | (1 << ScriptParser.STRUCT) | (1 << ScriptParser.FUN) | (1 << ScriptParser.ARCHETYPE) | (1 << ScriptParser.CONST) | (1 << ScriptParser.VAR) | (1 << ScriptParser.VAL) | (1 << ScriptParser.PIT) | (1 << ScriptParser.IF) | (1 << ScriptParser.WHILE) | (1 << ScriptParser.GETTER) | (1 << ScriptParser.SETTER))) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)) | (1 << (ScriptParser.FloatLiteral - 64)) | (1 << (ScriptParser.IntegerLiteral - 64)) | (1 << (ScriptParser.BooleanLiteral - 64)) | (1 << (ScriptParser.Identifier - 64)))) != 0):
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << ScriptParser.LPAREN) | (1 << ScriptParser.ADD) | (1 << ScriptParser.SUB) | (1 << ScriptParser.INCR) | (1 << ScriptParser.DECR) | (1 << ScriptParser.EXCL) | (1 << ScriptParser.IMPORT) | (1 << ScriptParser.STRUCT) | (1 << ScriptParser.FUN) | (1 << ScriptParser.ARCHETYPE) | (1 << ScriptParser.CONST) | (1 << ScriptParser.VAR) | (1 << ScriptParser.VAL) | (1 << ScriptParser.PIT) | (1 << ScriptParser.IF) | (1 << ScriptParser.WHILE) | (1 << ScriptParser.GETTER) | (1 << ScriptParser.SETTER))) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)) | (1 << (ScriptParser.FloatLiteral - 64)) | (1 << (ScriptParser.IntegerLiteral - 64)) | (1 << (ScriptParser.BooleanLiteral - 64)) | (1 << (ScriptParser.Identifier - 64)))) != 0):
                 self.state = 525
                 self.statement()
                 self.state = 536
@@ -3158,7 +3158,7 @@ class ScriptParser ( Parser ):
                     self.state = 532
                     self._errHandler.sync(self)
                     _la = self._input.LA(1)
-                    if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << ScriptParser.LPAREN) | (1 << ScriptParser.ADD) | (1 << ScriptParser.SUB) | (1 << ScriptParser.INCR) | (1 << ScriptParser.DECR) | (1 << ScriptParser.EXCL) | (1 << ScriptParser.IMPORT) | (1 << ScriptParser.STRUCT) | (1 << ScriptParser.FUN) | (1 << ScriptParser.ARCHETYPE) | (1 << ScriptParser.CONST) | (1 << ScriptParser.VAR) | (1 << ScriptParser.VAL) | (1 << ScriptParser.PIT) | (1 << ScriptParser.IF) | (1 << ScriptParser.WHILE) | (1 << ScriptParser.GETTER) | (1 << ScriptParser.SETTER))) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)) | (1 << (ScriptParser.FloatLiteral - 64)) | (1 << (ScriptParser.IntegerLiteral - 64)) | (1 << (ScriptParser.BooleanLiteral - 64)) | (1 << (ScriptParser.Identifier - 64)))) != 0):
+                    if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << ScriptParser.LPAREN) | (1 << ScriptParser.ADD) | (1 << ScriptParser.SUB) | (1 << ScriptParser.INCR) | (1 << ScriptParser.DECR) | (1 << ScriptParser.EXCL) | (1 << ScriptParser.IMPORT) | (1 << ScriptParser.STRUCT) | (1 << ScriptParser.FUN) | (1 << ScriptParser.ARCHETYPE) | (1 << ScriptParser.CONST) | (1 << ScriptParser.VAR) | (1 << ScriptParser.VAL) | (1 << ScriptParser.PIT) | (1 << ScriptParser.IF) | (1 << ScriptParser.WHILE) | (1 << ScriptParser.GETTER) | (1 << ScriptParser.SETTER))) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)) | (1 << (ScriptParser.FloatLiteral - 64)) | (1 << (ScriptParser.IntegerLiteral - 64)) | (1 << (ScriptParser.BooleanLiteral - 64)) | (1 << (ScriptParser.Identifier - 64)))) != 0):
                         self.state = 531
                         self.statement()
 
@@ -3389,7 +3389,7 @@ class ScriptParser ( Parser ):
                 self.state = 552
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
+                if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
                     self.state = 551
                     self.modifierList()
 
@@ -3403,7 +3403,7 @@ class ScriptParser ( Parser ):
                 self.state = 556
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
+                if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
                     self.state = 555
                     self.modifierList()
 
@@ -3522,7 +3522,7 @@ class ScriptParser ( Parser ):
                 self.state = 577
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
+                if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
                     self.state = 576
                     self.modifierList()
 
@@ -3536,7 +3536,7 @@ class ScriptParser ( Parser ):
                 self.state = 581
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
+                if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
                     self.state = 580
                     self.modifierList()
 
@@ -3647,7 +3647,7 @@ class ScriptParser ( Parser ):
             self.state = 606
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
+            if ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0):
                 self.state = 605
                 self.modifierList()
 
@@ -4788,7 +4788,7 @@ class ScriptParser ( Parser ):
                 self.state = 787
                 self.loopExpression()
                 pass
-            elif token in [ScriptParser.IMPORT, ScriptParser.ARCHETYPE, ScriptParser.CONST, ScriptParser.GETTER, ScriptParser.SETTER, ScriptParser.PUBLIC, ScriptParser.PRIVATE, ScriptParser.OPERATOR, ScriptParser.DATA, ScriptParser.Identifier]:
+            elif token in [ScriptParser.IMPORT, ScriptParser.ARCHETYPE, ScriptParser.CONST, ScriptParser.GETTER, ScriptParser.SETTER, ScriptParser.PUBLIC, ScriptParser.PRIVATE, ScriptParser.OPERATOR, ScriptParser.INLINE, ScriptParser.SPAWNINIT, ScriptParser.Identifier]:
                 self.enterOuterAlt(localctx, 5)
                 self.state = 788
                 self.simpleIdentifier()
@@ -4966,7 +4966,7 @@ class ScriptParser ( Parser ):
             self.state = 806
             self._errHandler.sync(self)
             _la = self._input.LA(1)
-            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << ScriptParser.LPAREN) | (1 << ScriptParser.ADD) | (1 << ScriptParser.SUB) | (1 << ScriptParser.INCR) | (1 << ScriptParser.DECR) | (1 << ScriptParser.EXCL) | (1 << ScriptParser.IMPORT) | (1 << ScriptParser.ARCHETYPE) | (1 << ScriptParser.CONST) | (1 << ScriptParser.IF) | (1 << ScriptParser.WHILE) | (1 << ScriptParser.GETTER) | (1 << ScriptParser.SETTER))) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.FloatLiteral - 64)) | (1 << (ScriptParser.IntegerLiteral - 64)) | (1 << (ScriptParser.BooleanLiteral - 64)) | (1 << (ScriptParser.Identifier - 64)))) != 0):
+            if (((_la) & ~0x3f) == 0 and ((1 << _la) & ((1 << ScriptParser.LPAREN) | (1 << ScriptParser.ADD) | (1 << ScriptParser.SUB) | (1 << ScriptParser.INCR) | (1 << ScriptParser.DECR) | (1 << ScriptParser.EXCL) | (1 << ScriptParser.IMPORT) | (1 << ScriptParser.ARCHETYPE) | (1 << ScriptParser.CONST) | (1 << ScriptParser.IF) | (1 << ScriptParser.WHILE) | (1 << ScriptParser.GETTER) | (1 << ScriptParser.SETTER))) != 0) or ((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)) | (1 << (ScriptParser.FloatLiteral - 64)) | (1 << (ScriptParser.IntegerLiteral - 64)) | (1 << (ScriptParser.BooleanLiteral - 64)) | (1 << (ScriptParser.Identifier - 64)))) != 0):
                 self.state = 798
                 self.valueArgument()
                 self.state = 803
@@ -5291,7 +5291,7 @@ class ScriptParser ( Parser ):
                 self.state = 854
                 self.block()
                 pass
-            elif token in [ScriptParser.LPAREN, ScriptParser.ADD, ScriptParser.SUB, ScriptParser.INCR, ScriptParser.DECR, ScriptParser.EXCL, ScriptParser.IMPORT, ScriptParser.ARCHETYPE, ScriptParser.CONST, ScriptParser.IF, ScriptParser.WHILE, ScriptParser.GETTER, ScriptParser.SETTER, ScriptParser.PUBLIC, ScriptParser.PRIVATE, ScriptParser.OPERATOR, ScriptParser.DATA, ScriptParser.FloatLiteral, ScriptParser.IntegerLiteral, ScriptParser.BooleanLiteral, ScriptParser.Identifier]:
+            elif token in [ScriptParser.LPAREN, ScriptParser.ADD, ScriptParser.SUB, ScriptParser.INCR, ScriptParser.DECR, ScriptParser.EXCL, ScriptParser.IMPORT, ScriptParser.ARCHETYPE, ScriptParser.CONST, ScriptParser.IF, ScriptParser.WHILE, ScriptParser.GETTER, ScriptParser.SETTER, ScriptParser.PUBLIC, ScriptParser.PRIVATE, ScriptParser.OPERATOR, ScriptParser.INLINE, ScriptParser.SPAWNINIT, ScriptParser.FloatLiteral, ScriptParser.IntegerLiteral, ScriptParser.BooleanLiteral, ScriptParser.Identifier]:
                 self.enterOuterAlt(localctx, 2)
                 self.state = 855
                 self.expression()
@@ -5506,7 +5506,7 @@ class ScriptParser ( Parser ):
                 self.state = 882 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not (((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0)):
+                if not (((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0)):
                     break
 
         except RecognitionException as re:
@@ -5539,8 +5539,8 @@ class ScriptParser ( Parser ):
         def OPERATOR(self):
             return self.getToken(ScriptParser.OPERATOR, 0)
 
-        def DATA(self):
-            return self.getToken(ScriptParser.DATA, 0)
+        def INLINE(self):
+            return self.getToken(ScriptParser.INLINE, 0)
 
         def SPAWNINIT(self):
             return self.getToken(ScriptParser.SPAWNINIT, 0)
@@ -5580,7 +5580,7 @@ class ScriptParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 884
             _la = self._input.LA(1)
-            if not(((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.DATA - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0)):
+            if not(((((_la - 64)) & ~0x3f) == 0 and ((1 << (_la - 64)) & ((1 << (ScriptParser.PUBLIC - 64)) | (1 << (ScriptParser.PRIVATE - 64)) | (1 << (ScriptParser.SHARED - 64)) | (1 << (ScriptParser.STATIC - 64)) | (1 << (ScriptParser.OPERATOR - 64)) | (1 << (ScriptParser.INLINE - 64)) | (1 << (ScriptParser.SPAWNINIT - 64)))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)
@@ -5698,8 +5698,11 @@ class ScriptParser ( Parser ):
         def Identifier(self):
             return self.getToken(ScriptParser.Identifier, 0)
 
-        def DATA(self):
-            return self.getToken(ScriptParser.DATA, 0)
+        def SPAWNINIT(self):
+            return self.getToken(ScriptParser.SPAWNINIT, 0)
+
+        def INLINE(self):
+            return self.getToken(ScriptParser.INLINE, 0)
 
         def GETTER(self):
             return self.getToken(ScriptParser.GETTER, 0)
@@ -5754,7 +5757,7 @@ class ScriptParser ( Parser ):
             self.enterOuterAlt(localctx, 1)
             self.state = 905
             _la = self._input.LA(1)
-            if not(((((_la - 47)) & ~0x3f) == 0 and ((1 << (_la - 47)) & ((1 << (ScriptParser.IMPORT - 47)) | (1 << (ScriptParser.ARCHETYPE - 47)) | (1 << (ScriptParser.CONST - 47)) | (1 << (ScriptParser.GETTER - 47)) | (1 << (ScriptParser.SETTER - 47)) | (1 << (ScriptParser.PUBLIC - 47)) | (1 << (ScriptParser.PRIVATE - 47)) | (1 << (ScriptParser.OPERATOR - 47)) | (1 << (ScriptParser.DATA - 47)) | (1 << (ScriptParser.Identifier - 47)))) != 0)):
+            if not(((((_la - 47)) & ~0x3f) == 0 and ((1 << (_la - 47)) & ((1 << (ScriptParser.IMPORT - 47)) | (1 << (ScriptParser.ARCHETYPE - 47)) | (1 << (ScriptParser.CONST - 47)) | (1 << (ScriptParser.GETTER - 47)) | (1 << (ScriptParser.SETTER - 47)) | (1 << (ScriptParser.PUBLIC - 47)) | (1 << (ScriptParser.PRIVATE - 47)) | (1 << (ScriptParser.OPERATOR - 47)) | (1 << (ScriptParser.INLINE - 47)) | (1 << (ScriptParser.SPAWNINIT - 47)) | (1 << (ScriptParser.Identifier - 47)))) != 0)):
                 self._errHandler.recoverInline(self)
             else:
                 self._errHandler.reportMatch(self)

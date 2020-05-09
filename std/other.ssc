@@ -62,3 +62,25 @@ fun play(id: Number, time: Number) {
 }
 
 val now get() { getNumber(1, 0) }
+
+struct Rectangle(
+    centerX: Number,
+    centerY: Number,
+    width: Number,
+    height: Number
+) {
+    inline val x1 = centerX - width / 2
+    inline val y1 = centerY - height / 2
+    inline val x2 = centerX - width / 2
+    inline val y2 = centerY + height / 2
+    inline val x3 = centerX + width / 2
+    inline val y3 = centerY + height / 2
+    inline val x4 = centerX + width / 2
+    inline val y4 = centerY - height / 2
+
+    fun drawSprite(id: Number, z: Number, alpha: Number) {
+        draw(
+            id, x1, y1, x2, y2, x3, y3, x4, y4, z, alpha
+        )
+    }
+}

@@ -3,10 +3,7 @@ import initialize
 import note
 
 levelvar l_touchOccupied
-
-var touchOccupied
-    get() { Boolean(l_touchOccupied) }
-    set(value: Boolean) { Boolean(l_touchOccupied) = value }
+inline var touchOccupied = Boolean(l_touchOccupied)
 
 script PreGameManager() {
     callback initialize {
@@ -16,7 +13,7 @@ script PreGameManager() {
         getNumber(ENTITY_INFO_ARRAY, 2) == DESPAWNED
     }
 
-    callback @PRE_MANAGER_ORDER touch {
+    callback touch {
         touchOccupied = false
     }
 }
@@ -29,7 +26,7 @@ script PostGameManager() {
         getNumber(ENTITY_INFO_ARRAY, 2) == DESPAWNED
     }
 
-    callback @POST_MANAGER_ORDER touch {
+    callback @100 touch {
         if (touchStarted && !touchOccupied) {
             play(CLIP_EMPTY, MIN_EFFECT_TIME)
             Effect(now)

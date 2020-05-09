@@ -148,6 +148,19 @@ class Property:
         self._value = None
         self._initializer = None
 
+        if 'inline' in self.modifiers:
+            if self.getter or self.setter or not self.expression:
+                raise RuntimeError
+            if self.variant in ('val', 'var'):
+                self.getter = Getter(GetterNode([], [self.expression]), self.context)
+            if self.variant in ('pit', 'var'):
+                self.setter = Setter(
+                    SetterNode([], SimpleIdentifierNode(None), SimpleIdentifierNode(None), [self.expression]),
+                    self.context)
+            self.inline = True
+        else:
+            self.inline = False
+
         try:
             if 'shared' in self.modifiers:
                 self.allocator = self.context.shared_allocator
@@ -183,19 +196,22 @@ class Property:
         else:
             return None
 
+    def with_receiver(self, receiver):
+        return PropertyWithReceiver(self, receiver)
+
     @property
     def value(self):
         if self._value:
             return self._value
-        if self.expression:
+        if self.expression and not self.inline:
             self._initializer = ExpressionBody([self.expression], self.context)
             if self._initializer.returns:
                 self._value = self._initializer.returns.type.allocate_value_on(self.allocator)
         return self._value
 
-    def get_getter(self):
+    def get_getter(self, receiver=None):
         if self.getter:
-            return self.getter.call(self.value)
+            return self.getter.call(self.value, receiver)
         else:
             return self.value
 
@@ -205,10 +221,46 @@ class Property:
         else:
             return self.value
 
-    def call_setter(self, arg):
+    def call_setter(self, arg, receiver=None):
         if self.setter:
-            return self.setter.call(arg, self.value)
+            return self.setter.call(arg, self.value, receiver)
         return None
+
+
+class PropertyWithReceiver:
+    def __init__(self, property: Property, receiver: StructConstruction):
+        self.property = property
+        self.receiver = receiver
+        self.context = property.context
+        self.modifiers = property.modifiers
+        self.identifier = property.identifier
+        self.variant = property.variant
+        self.expression = property.expression
+        self.getter = property.getter
+        self.setter = property.setter
+
+    def initialization_expression(self):
+        return self.property.initialization_expression()
+
+    @property
+    def initializer(self):
+        return self.property.initializer
+
+    def with_receiver(self, receiver):
+        return PropertyWithReceiver(self.property, receiver)
+
+    @property
+    def value(self):
+        return self.property.value
+
+    def get_getter(self, receiver=None):
+        return self.property.get_getter(self.receiver)
+
+    def get_setter(self):
+        return self.property.get_setter()
+
+    def call_setter(self, arg, receiver=None):
+        return self.property.call_setter(arg, self.receiver)
 
 
 class ScriptSpawn:
@@ -246,11 +298,16 @@ class Getter:
         self.modifiers = node.modifiers
         self.body = FunctionBody(node.body, context)
 
-    def call(self, field: Optional[StructConstruction]):
+    def call(self, field: Optional[StructConstruction], receiver: Optional[StructConstruction]):
+        params = []
+        args = []
         if field:
-            return self.body.call([FunctionParameter('field', field.type.identifier, self.context)], [field])
-        else:
-            return self.body.call([], [])
+            params.append(FunctionParameter('field', field.type.identifier, self.context))
+            args.append(field)
+        if receiver:
+            params.append(FunctionParameter('this', receiver.type.identifier, self.context))
+            args.append(receiver)
+        return self.body.call(params, args)
 
 
 class Setter:
@@ -261,14 +318,16 @@ class Setter:
         self.parameter_name = node.parameter_name.value
         self.body = FunctionBody(node.body, context)
 
-    def call(self, arg, field: Optional[StructConstruction]):
+    def call(self, arg, field: Optional[StructConstruction], receiver: StructConstruction):
+        params = [FunctionParameter(self.parameter_name, self.user_type, self.context)]
+        args = [arg]
         if field:
-            return self.body.call([FunctionParameter('field', field.type.identifier, self.context),
-                                   FunctionParameter(self.parameter_name, self.user_type, self.context)],
-                                  [field, arg])
-        else:
-            return self.body.call([FunctionParameter(self.parameter_name, self.user_type, self.context)],
-                                 [arg])
+            params.append(FunctionParameter('field', field.type.identifier, self.context))
+            args.append(field)
+        if receiver:
+            params.append(FunctionParameter('this', receiver.type.identifier, self.context))
+            args.append(receiver)
+        return self.body.call(params, args)
 
 
 class Struct:
@@ -371,7 +430,7 @@ class Script:
                 Function(d, self.context)
             elif isinstance(d, PropertyDeclarationNode):
                 p = Property(d, self.context)
-                if p.expression:
+                if p.expression and not p.inline:
                     self.initialize_properties.append(p)
             elif isinstance(d, CallbackDeclarationNode):
                 self.callbacks.append(Callback(d, self.context))
@@ -435,7 +494,7 @@ class FunctionBody:
                 Constant(s, self.context)
             elif isinstance(s, PropertyDeclarationNode):
                 p = Property(s, self.context)
-                if p.expression:
+                if p.expression and not p.inline:
                     self.initialize_properties.append(p)
             else:
                 # this includes properties, since the assignment is done in order as part of the block
@@ -589,6 +648,8 @@ class ExpressionBody:
             this_find_result = isinstance(this, StructConstruction) and this.find(expression.value)
             if this_find_result:
                 e = this_find_result
+            if isinstance(e, Property):
+                e = e.with_receiver(this)
             return self.resolve_expression(e)
         elif isinstance(expression, Constant):
             return StructConstruction(self.context.find(expression.type),
@@ -693,7 +754,7 @@ class ExpressionBody:
                 return op.call([value])
             else:
                 raise NotImplementedError
-        elif isinstance(expression, Property):
+        elif isinstance(expression, (Property, PropertyWithReceiver)):
             return expression.get_getter()
         elif isinstance(expression, Allocation):
             return StructConstruction(self.number, [RawValue(expression)], self.context)
