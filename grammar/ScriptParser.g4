@@ -20,6 +20,30 @@ topLevelObject
     | structDeclaration
     | scriptDeclaration
     | propertyDeclaration
+    | archetypeDeclaration
+    | levelvarDeclaration
+    ;
+
+levelvarDeclaration
+    : LEVELVAR simpleIdentifier
+    ;
+
+archetypeDeclaration
+    : ARCHETYPE NL* archetypeName NL*
+    COLONCOLON NL* HASH? simpleIdentifier
+    archetypeDefaults
+    ;
+
+archetypeName
+    : simpleIdentifier
+    ;
+
+archetypeDefaults
+    : LPAREN (archetypeDefault (COMMA archetypeDefault)*)? RPAREN
+    ;
+
+archetypeDefault
+    : simpleIdentifier ASSIGNMENT literalConstant
     ;
 
 structDeclaration
@@ -137,7 +161,7 @@ getter
 
 setter
     : modifierList? SETTER
-    | modifierList? SETTER NL* LPAREN simpleIdentifier RPAREN NL* functionBody
+    | modifierList? SETTER NL* LPAREN simpleIdentifier COLON userType RPAREN NL* functionBody
     ;
 
 constantDeclaration
@@ -272,6 +296,7 @@ simpleIdentifier
     | PRIVATE
     | PUBLIC
     | SETTER
+    | ARCHETYPE
     //strong keywords
     | CONST
     ;

@@ -29,6 +29,31 @@ class ScriptParserVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by ScriptParser#levelvarDeclaration.
+    def visitLevelvarDeclaration(self, ctx:ScriptParser.LevelvarDeclarationContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ScriptParser#archetypeDeclaration.
+    def visitArchetypeDeclaration(self, ctx:ScriptParser.ArchetypeDeclarationContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ScriptParser#archetypeName.
+    def visitArchetypeName(self, ctx:ScriptParser.ArchetypeNameContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ScriptParser#archetypeDefaults.
+    def visitArchetypeDefaults(self, ctx:ScriptParser.ArchetypeDefaultsContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by ScriptParser#archetypeDefault.
+    def visitArchetypeDefault(self, ctx:ScriptParser.ArchetypeDefaultContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by ScriptParser#structDeclaration.
     def visitStructDeclaration(self, ctx:ScriptParser.StructDeclarationContext):
         return self.visitChildren(ctx)

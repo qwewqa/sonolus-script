@@ -44,6 +44,51 @@ class ScriptParserListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by ScriptParser#levelvarDeclaration.
+    def enterLevelvarDeclaration(self, ctx:ScriptParser.LevelvarDeclarationContext):
+        pass
+
+    # Exit a parse tree produced by ScriptParser#levelvarDeclaration.
+    def exitLevelvarDeclaration(self, ctx:ScriptParser.LevelvarDeclarationContext):
+        pass
+
+
+    # Enter a parse tree produced by ScriptParser#archetypeDeclaration.
+    def enterArchetypeDeclaration(self, ctx:ScriptParser.ArchetypeDeclarationContext):
+        pass
+
+    # Exit a parse tree produced by ScriptParser#archetypeDeclaration.
+    def exitArchetypeDeclaration(self, ctx:ScriptParser.ArchetypeDeclarationContext):
+        pass
+
+
+    # Enter a parse tree produced by ScriptParser#archetypeName.
+    def enterArchetypeName(self, ctx:ScriptParser.ArchetypeNameContext):
+        pass
+
+    # Exit a parse tree produced by ScriptParser#archetypeName.
+    def exitArchetypeName(self, ctx:ScriptParser.ArchetypeNameContext):
+        pass
+
+
+    # Enter a parse tree produced by ScriptParser#archetypeDefaults.
+    def enterArchetypeDefaults(self, ctx:ScriptParser.ArchetypeDefaultsContext):
+        pass
+
+    # Exit a parse tree produced by ScriptParser#archetypeDefaults.
+    def exitArchetypeDefaults(self, ctx:ScriptParser.ArchetypeDefaultsContext):
+        pass
+
+
+    # Enter a parse tree produced by ScriptParser#archetypeDefault.
+    def enterArchetypeDefault(self, ctx:ScriptParser.ArchetypeDefaultContext):
+        pass
+
+    # Exit a parse tree produced by ScriptParser#archetypeDefault.
+    def exitArchetypeDefault(self, ctx:ScriptParser.ArchetypeDefaultContext):
+        pass
+
+
     # Enter a parse tree produced by ScriptParser#structDeclaration.
     def enterStructDeclaration(self, ctx:ScriptParser.StructDeclarationContext):
         pass

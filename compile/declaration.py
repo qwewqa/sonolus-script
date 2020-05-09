@@ -29,6 +29,10 @@ class ScriptFile:
                 Struct(d, self.context)
             elif isinstance(d, ScriptDeclarationNode):
                 Script(d, self.context)
+            elif isinstance(d, ArchetypeDeclarationNode):
+                Archetype(d, self.context)
+            elif isinstance(d, LevelvarDeclarationNode):
+                Levelvar(d, self.context)
             else:
                 raise RuntimeError('Unexpected tld')
 
@@ -115,6 +119,7 @@ class Function:
         self.body = FunctionBody(node.body, context)
 
         self._signature = None
+
         context.add(self.identifier, self.unresolved_signature, self)
 
     @property
@@ -189,11 +194,16 @@ class Property:
         else:
             return self.value
 
-    def get_setter(self, arg):
+    def get_setter(self):
         if self.setter:
-            return self.setter.call(self.value, arg)
+            return None
         else:
             return self.value
+
+    def call_setter(self, arg):
+        if self.setter:
+            return self.setter.call(arg, self.value)
+        return None
 
 
 class Getter:
@@ -213,16 +223,18 @@ class Setter:
     def __init__(self, node: SetterNode, context: Context):
         self.context = context
         self.modifiers = node.modifiers
+        self.user_type = node.user_type.value
         self.parameter_name = node.parameter_name.value
         self.body = FunctionBody(node.body, context)
 
     def call(self, arg, field: Optional[StructConstruction]):
         if field:
             return self.body.call([FunctionParameter('field', field.type.identifier, self.context),
-                                   FunctionParameter(self.parameter_name, field.type.identifier, self.context)],
+                                   FunctionParameter(self.parameter_name, self.user_type, self.context)],
                                   [field, arg])
         else:
-            raise NotImplementedError
+            return self.body.call([FunctionParameter(self.parameter_name, self.user_type, self.context)],
+                                 [arg])
 
 
 class Struct:
@@ -254,6 +266,53 @@ class Struct:
             return self._signature
         self._signature = tuple(f.type for f in self.fields)
         return self._signature
+
+
+class Archetype:
+    def __init__(self, node: ArchetypeDeclarationNode, context: FileContext):
+        self.context = context
+        self.identifier = node.identifier.value
+        self.script_identifier = node.script.value
+        self.input = node.input
+        self._script = None
+        self.defaults = {d.identifier.value: float(d.value.value) for d in node.defaults}
+        context.add_global(self.identifier, None, self)
+
+    @property
+    def script(self):
+        if self._script:
+            return self._script
+        self._script = self.context.find(self.script_identifier, None)
+        return self._script
+
+    def to_dict(self, mapping):
+        return {'script': mapping[self.script], 'input': self.input}
+
+    def to_entity_dict(self, arguments, archetype_mappings):
+        args = {}
+        args.update(self.defaults)
+        args.update(arguments)
+        data = [0] * 32
+        for a, v in args:
+            data[self.script.parameter_indexes[a]] = v
+        while data and data[-1] == 0:
+            data.pop()
+        return {
+            'archetype': archetype_mappings[self],
+            'data': {
+                'index': 0,
+                'values': data
+            }
+        } if data else {'archetype': archetype_mappings[self]}
+
+
+class Levelvar:
+    def __init__(self, node: LevelvarDeclarationNode, context: FileContext):
+        self.context = context
+        self.identifier = node.identifier.value
+        self.value = RawValue(context.level_allocator.allocate())
+
+        context.add(self.identifier, None, self.value)
 
 
 class Script:
@@ -288,7 +347,12 @@ class Script:
         next(c for c in self.callbacks if
              c.identifier == 'initialize').add_initialize_properties(self.initialize_properties)
 
+        self.parameter_indexes = {n: p.index for n, p in self.parameters.items()}
+
         context.add_global(self.identifier, None, self)
+
+    def to_dict(self, mapping):
+        return {c.identifier: {'index': mapping[c.entry_node], 'order': c.order} for c in self.callbacks}
 
 
 class Callback:
@@ -297,7 +361,7 @@ class Callback:
         self.identifier = node.identifier.value
         self._order = ConstantExpression(node.order, self.context) if node.order else 0
         self.body = FunctionBody(node.body, self.context, False)
-        self.entry_index = None
+        self.entry_node = None
 
     @property
     def order(self):
@@ -494,6 +558,8 @@ class ExpressionBody:
         elif isinstance(expression, Constant):
             return StructConstruction(self.context.find(expression.type),
                                       [RawValue(expression.value, self.context, None)], self.context)
+        elif isinstance(expression, RawValue):
+            return StructConstruction(self.raw, [expression], self.context)
         elif isinstance(expression, InfixExpressionNode):
             opname = OPERATORS.get(expression.op, expression.op)
 
@@ -507,17 +573,17 @@ class ExpressionBody:
                         lhs = this_find_result
                     else:
                         lhs = self.context.find(lhs.value, None)
+                if isinstance(lhs, UnaryExpressionNode):
+                    lhs = self.resolve_expression(lhs)
                 if not isinstance(lhs, (Property, StructConstruction)):
                     raise RuntimeError('Can\'t assign')
                 return Assignment(lhs, rhs)
-
-            opname = OPERATORS.get(opname, opname)
 
             lhs = self.resolve_expression(expression.lhs)
             rhs = self.resolve_expression(expression.rhs)
 
             ops = ([lhs.type.context.find(opname, (lhs.type.identifier, rhs.type.identifier))] +
-                   self.context.find_all((lhs.type.identifier, opname), (lhs.type.identifier, rhs.type.identifier)))
+                   self.context.find_all(f'{lhs.type.identifier}.{opname}', (lhs.type.identifier, rhs.type.identifier)))
 
             op = next(f for f in ops if f and f.signature == (lhs.type, rhs.type) and 'operator' in f.modifiers)
             if not op:
@@ -576,6 +642,18 @@ class ExpressionBody:
             elif isinstance(op, MemberAccessNode):
                 value = self.resolve_expression(value)
                 return MemberAccess(value, op.value.value, self.context)
+            elif isinstance(op, str):  # TODO postfix
+                opname = OPERATORS[f'b{expression.op}']
+                value = self.resolve_expression(expression.value)
+
+                ops = ([value.type.context.find(opname, (value.type.identifier,))] +
+                       self.context.find_all(f'{value.type.identifier}.{opname}', (value.type.identifier,)))
+
+                op = next(f for f in ops if f and f.signature == (value.type,) and 'operator' in f.modifiers)
+                if not op:
+                    raise RuntimeError('Failed to find a matching function')
+
+                return op.call([value])
             else:
                 raise NotImplementedError
         elif isinstance(expression, Property):
@@ -600,6 +678,8 @@ class ExpressionBody:
             return expression
         elif isinstance(expression, RawValue):
             return expression
+        elif isinstance(expression, BuiltinFunctionCall):
+            return expression
         raise RuntimeError
 
     def to_node(self):
@@ -618,8 +698,11 @@ class Assignment:
 
     def to_node(self):
         if isinstance(self.lhs, Property):
-            setter = self.lhs.get_setter(self.rhs)
-            return Assignment(setter, self.rhs).to_node()
+            setter = self.lhs.call_setter(self.rhs)
+            if setter:
+                return setter.to_node()
+            else:
+                return Assignment(self.lhs.get_setter(), self.rhs).to_node()
         elif isinstance(self.lhs, RawValue):
             if isinstance(self.rhs, RawValue):
                 return FunctionSNode(
@@ -651,7 +734,10 @@ class Assignment:
                 )
         elif isinstance(self.lhs, StructConstruction):
             if isinstance(self.rhs, RawValue):
-                raise RuntimeError
+                if self.lhs.type.identifier == 'Raw':
+                    return Assignment(self.lhs.arguments[0], self.rhs).to_node()
+                else:
+                    raise RuntimeError
             elif isinstance(self.rhs, ExpressionBody):
                 return FunctionSNode(
                     'Execute',
@@ -675,18 +761,26 @@ class MemberAccess:
         self.receiver = receiver
         self.name = name
         if isinstance(self.receiver, Struct):
-            self.type = self.receiver
+            self.receiver_type = self.receiver
         else:
-            self.type = self.receiver.type
+            self.receiver_type = self.receiver.type
+
+    @property
+    def type(self):
+        r = self.resolve()
+        if isinstance(r, Struct):
+            return r
+        else:
+            return r.type
 
     def resolve(self, signature=None):
         if signature is None and isinstance(self.receiver, StructConstruction) and self.receiver.find(self.name):
             return self.receiver.find(self.name)
-        return self.type.context.find_direct(self.name, signature)
+        return self.receiver_type.context.find_direct(self.name, signature)
 
     def resolve_with_receiver(self, partial_signature, partial_resolved_signature):
-        f = self.resolve((self.type.identifier,) + partial_signature)
-        return f if f and f.signature == (self.type,) + partial_resolved_signature else None
+        f = self.resolve((self.receiver_type.identifier,) + partial_signature)
+        return f if f and f.signature == (self.receiver_type,) + partial_resolved_signature else None
 
     def to_node(self):
         if isinstance(self.receiver, (MemberAccess, ExpressionBody)):
@@ -764,9 +858,6 @@ class StructConstruction:
 
     def find(self, name):
         return self.fields.get(name)
-
-        return StructConstruction(self.field_metadata[name].type, [self.fields[name]],
-                                  self.context) if name in self.fields else None
 
     def to_node(self):
         if len(self.arguments) != 1:

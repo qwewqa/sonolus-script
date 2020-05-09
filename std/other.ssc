@@ -1,3 +1,62 @@
 struct Raw(value: Raw) {
 
 }
+
+fun draw(
+    id: Number,
+    x1: Number,
+    y1: Number,
+    x2: Number,
+    y2: Number,
+    x3: Number,
+    y3: Number,
+    x4: Number,
+    y4: Number,
+    z: Number,
+    alpha: Number
+) {
+    Draw(id, x1, y1, x2, y2, x3, y3, x4, y4, z, alpha)
+}
+
+fun play(id: Number, dist: Number) {
+    Play(id, dist)
+}
+
+fun judge(
+    src: Number,
+    dst: Number,
+    min1: Number,
+    max1: Number,
+    min2: Number,
+    max2: Number,
+    min3: Number,
+    max3: Number
+) {
+    return Number(Judge(src, dst, min1, max1, min2, max2, min3, max3))
+}
+
+fun judge(
+    src: Number,
+    dst: Number,
+    max1: Number,
+    max2: Number,
+    max3: Number
+) {
+    return Number(JudgeSimple(src, dst, max1, max2, max3))
+}
+
+fun getNumberOption(index: Number) {
+    Number(Get(2, index.value))
+}
+
+fun getBooleanOption(index: Number) {
+    Boolean(Get(2, index.value))
+}
+
+fun getNumber(id: Number, index: Number) {
+    Number(Get(id.value, index.value))
+}
+
+fun getBoolean(id: Number, index: Number) {
+    Boolean(Get(id.value, index.value))
+}

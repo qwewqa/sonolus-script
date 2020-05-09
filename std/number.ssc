@@ -1,4 +1,7 @@
 struct Number(value: Raw) {
+    // Avoid recursive definition of -1, since constants are resolved statically
+    const NEGATIVE_ONE = -1
+
     operator fun plus(other: Number) {
         Number(Add(value,  other.value))
     }
@@ -17,6 +20,26 @@ struct Number(value: Raw) {
 
     operator fun mod(other: Number) {
         Number(Mod(value, other.value))
+    }
+
+    operator fun plusAssign(other: Number) {
+        this = this + other
+    }
+
+    operator fun minusAssign(other: Number) {
+        this = this - other
+    }
+
+    operator fun mulAssign(other: Number) {
+        this = this * other
+    }
+
+    operator fun divAssign(other: Number) {
+        this = this / other
+    }
+
+    operator fun modAssign(other: Number) {
+        this = this % other
     }
 
     operator fun pow(other: Number) {
@@ -48,7 +71,7 @@ struct Number(value: Raw) {
     }
 
     operator fun neg() {
-        this * -1
+        this * NEGATIVE_ONE
     }
 
     operator fun pos() {

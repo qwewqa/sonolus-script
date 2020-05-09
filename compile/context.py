@@ -93,7 +93,7 @@ def read_script(path):
 class GlobalContext(Context):
     def __init__(self, path):
         super().__init__()
-
+        self.level_allocator = BlockAllocator(0, 256)
         self.path = pathlib.Path(__file__).parent.parent.joinpath("./std")
         for filename in STD_FILENAMES:
             self.get(filename)
@@ -111,8 +111,9 @@ class GlobalContext(Context):
 
 
 class FileContext(Context):
-    def __init__(self, parent):
+    def __init__(self, parent: GlobalContext):
         super().__init__(parent)
+        self.level_allocator = parent.level_allocator
 
     def import_script(self, script):
         self.import_context(script.context)

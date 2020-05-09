@@ -1,0 +1,5 @@
+const ENTITY_INFO_ARRAY = 10
+
+const WAITING = 0
+const SPAWNED = 1
+const DESPAWNED = 2

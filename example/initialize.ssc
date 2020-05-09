@@ -1,0 +1,9 @@
+import constants
+
+script Initializer() {
+    callback updateSequential {
+        true
+    }
+}
+
+archetype Initialize :: Initializer()

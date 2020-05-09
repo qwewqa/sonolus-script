@@ -1,0 +1,128 @@
+{
+  "configuration": {
+    "menu": {
+      "position": {
+        "anchor": {
+          "x": 1,
+          "y": 1
+        },
+        "pivot": {
+          "x": 1,
+          "y": 1
+        }
+      }
+    },
+    "score": {
+      "position": {
+        "anchor": {
+          "x": 0,
+          "y": 1
+        },
+        "pivot": {
+          "x": 0,
+          "y": 1
+        }
+      },
+      "text": {
+        "horizontal": "left",
+        "vertical": "top"
+      }
+    },
+    "combo": {
+      "position": {
+        "anchor": {
+          "x": 0.9,
+          "y": 0.5
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0.5
+        }
+      }
+    },
+    "judgement": {
+      "position": {
+        "anchor": {
+          "x": 0.5,
+          "y": 0.25
+        },
+        "pivot": {
+          "x": 0.5,
+          "y": 0
+        }
+      },
+      "text": {
+        "horizontal": "center",
+        "vertical": "bottom"
+      }
+    }
+  },
+  "entities": [
+    {
+      "archetype": 1
+    },
+    {
+      "archetype": 0
+    }
+  ],
+  "archetypes": [
+    {
+      "script": 1,
+      "input": false
+    },
+    {
+      "script": 0,
+      "input": false
+    }
+  ],
+  "scripts": [
+    {
+      "updateSequential": {
+        "index": 1,
+        "order": 0
+      },
+      "initialize": {
+        "index": 0,
+        "order": 0
+      }
+    },
+    {
+      "initialize": {
+        "index": 0,
+        "order": 0
+      },
+      "shouldSpawn": {
+        "index": 5,
+        "order": 0
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "value": 0
+    },
+    {
+      "value": 1
+    },
+    {
+      "value": 2.0
+    },
+    {
+      "value": 10.0
+    },
+    {
+      "func": "Get",
+      "args": [
+        3,
+        2
+      ]
+    },
+    {
+      "func": "Equal",
+      "args": [
+        4,
+        2
+      ]
+    }
+  ]
+}

@@ -11,7 +11,7 @@ from visitor.visitor import ScriptVisitor
 
 
 def main(argv):
-    Compiler(pathlib.Path(os.path.abspath(argv[1])).parent)
+    Compiler(os.path.abspath(argv[1]))
 
 
 if __name__ == '__main__':

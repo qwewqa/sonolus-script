@@ -1,6 +1,0 @@
-const alice = 20
-private const p = 23342
-
-private fun foo(x, y) {
-    1
-}

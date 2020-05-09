@@ -21,6 +21,25 @@ class SimpleIdentifierNode:
         self.text = value
 
 
+class ArchetypeDeclarationNode:
+    def __init__(self, identifier, is_input, script, defaults):
+        self.identifier = identifier
+        self.script = script
+        self.input = is_input
+        self.defaults = defaults
+
+
+class LevelvarDeclarationNode:
+    def __init__(self, identifier):
+        self.identifier = identifier
+
+
+class ArchetypeDefault:
+    def __init__(self, identifier, value):
+        self.identifier = identifier
+        self.value = value
+
+
 class ScriptDeclarationNode:
     def __init__(self, identifier, parameters, body):
         self.identifier = identifier
@@ -60,7 +79,8 @@ class GetterNode:
 
 
 class SetterNode:
-    def __init__(self, modifiers, parameter_name, body):
+    def __init__(self, modifiers, parameter_name, user_type, body):
+        self.user_type = user_type
         self.modifiers = modifiers
         self.parameter_name = parameter_name
         self.body = body

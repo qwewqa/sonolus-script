@@ -1,0 +1,13 @@
+import constants
+import initialize
+
+script GameManager() {
+    callback initialize {
+    }
+
+    callback shouldSpawn {
+        getNumber(ENTITY_INFO_ARRAY, 2) == DESPAWNED
+    }
+}
+
+archetype Manager :: GameManager()

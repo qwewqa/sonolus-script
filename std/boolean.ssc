@@ -1,3 +1,13 @@
 struct Boolean(value: Raw) {
+    operator fun not() {
+        Boolean(Not(value))
+    }
 
+    operator fun and(other: Boolean) {
+        Boolean(And(value, other.value))
+    }
+
+    operator fun or(other: Boolean) {
+        Boolean(Or(value, other.value))
+    }
 }

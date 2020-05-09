@@ -28,8 +28,27 @@ class ScriptVisitor(ScriptParserVisitor):
             ctx.constantDeclaration() or
             ctx.structDeclaration() or
             ctx.scriptDeclaration() or
-            ctx.propertyDeclaration()
+            ctx.propertyDeclaration() or
+            ctx.archetypeDeclaration() or
+            ctx.levelvarDeclaration()
         )
+
+    def visitLevelvarDeclaration(self, ctx: ScriptParser.LevelvarDeclarationContext):
+        return LevelvarDeclarationNode(self.visit(ctx.simpleIdentifier()))
+
+    def visitArchetypeDeclaration(self, ctx: ScriptParser.ArchetypeDeclarationContext):
+        return ArchetypeDeclarationNode(
+            self.visit(ctx.archetypeName()),
+            ctx.HASH() is not None,
+            self.visit(ctx.simpleIdentifier()),
+            self.visit(ctx.archetypeDefaults())
+        )
+
+    def visitArchetypeDefaults(self, ctx: ScriptParser.ArchetypeDefaultsContext):
+        return self.tryVisitList(ctx.archetypeDefault())
+
+    def visitArchetypeDefault(self, ctx: ScriptParser.ArchetypeDefaultContext):
+        return ArchetypeDefault(self.visit(ctx.simpleIdentifier()), self.visit(ctx.literalConstant()))
 
     def visitStructDeclaration(self, ctx: ScriptParser.StructDeclarationContext):
         return StructDeclarationNode(
@@ -80,9 +99,10 @@ class ScriptVisitor(ScriptParserVisitor):
         )
 
     def visitCallbackDeclaration(self, ctx: ScriptParser.CallbackDeclarationContext):
-        return CallbackDeclarationNode(self.tryVisit(ctx.callbackOrder()), self.visit(ctx.simpleIdentifier()), self.visit(ctx.functionBody()))
+        return CallbackDeclarationNode(self.tryVisit(ctx.callbackOrder()), self.visit(ctx.simpleIdentifier()),
+                                       self.visit(ctx.functionBody()))
 
-    def visitCallbackOrder(self, ctx:ScriptParser.CallbackOrderContext):
+    def visitCallbackOrder(self, ctx: ScriptParser.CallbackOrderContext):
         if ctx.IntegerLiteral():
             return NumberLiteralNode(float(ctx.IntegerLiteral().getText()))
         else:
@@ -108,6 +128,7 @@ class ScriptVisitor(ScriptParserVisitor):
         return SetterNode(
             self.tryVisit(ctx.modifierList(), []),
             self.tryVisit(ctx.simpleIdentifier()),
+            self.tryVisit(ctx.userType()),
             self.tryVisit(ctx.functionBody())
         )
 
@@ -187,9 +208,9 @@ class ScriptVisitor(ScriptParserVisitor):
 
     def visitPrefixUnaryExpression(self, ctx: ScriptParser.PrefixUnaryExpressionContext):
         children = [c for c in ctx.getChildren()]
-        expr = self.visit(children.pop(0))
+        expr = self.visit(children.pop())
         while children:
-            expr = UnaryExpressionNode(expr, children.pop(0).getText())  # think
+            expr = UnaryExpressionNode(expr, children.pop().getText())
         return expr
 
     def visitPostfixUnaryExpression(self, ctx: ScriptParser.PostfixUnaryExpressionContext):
