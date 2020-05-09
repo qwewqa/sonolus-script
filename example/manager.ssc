@@ -1,13 +1,42 @@
 import constants
 import initialize
+import note
 
-script GameManager() {
+levelvar l_touchOccupied
+
+var touchOccupied
+    get() { Boolean(l_touchOccupied) }
+    set(value: Boolean) { Boolean(l_touchOccupied) = value }
+
+script PreGameManager() {
     callback initialize {
     }
 
     callback shouldSpawn {
         getNumber(ENTITY_INFO_ARRAY, 2) == DESPAWNED
     }
+
+    callback @PRE_MANAGER_ORDER touch {
+        touchOccupied = false
+    }
 }
 
-archetype Manager :: GameManager()
+script PostGameManager() {
+    callback initialize {
+    }
+
+    callback shouldSpawn {
+        getNumber(ENTITY_INFO_ARRAY, 2) == DESPAWNED
+    }
+
+    callback @POST_MANAGER_ORDER touch {
+        if (touchStarted && !touchOccupied) {
+            play(CLIP_EMPTY, MIN_EFFECT_TIME)
+            Effect(now)
+        }
+    }
+}
+
+
+archetype PreManager :: PreGameManager()
+archetype PostManager :: PostGameManager()

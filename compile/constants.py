@@ -2,6 +2,7 @@ STD_FILENAMES = {
     'blocks',
     'number',
     'boolean',
+    'input',
     'other'
 }
 
@@ -53,7 +54,12 @@ BUILTINS = {
     'Remap': 'Number',
     'Smoothstep': 'Number',
     'Get': 'Raw',
-    'Set': 'None'
+    'Set': 'None',
+    'Play': 'None',
+    'Judge': 'Number',
+    'JudgeSimple': 'Number',
+    'Draw': 'None',
+    'Spawn': 'None'
 }
 
 OPERATORS = {

@@ -156,15 +156,20 @@ class Property:
         except AttributeError:
             self.allocator = None
 
-        if self.variant == 'var':
-            if not self.expression and not (self.getter and self.setter):
-                raise RuntimeError('Property var has no expression and lacks a getter or setter')
-        elif self.variant == 'val':
-            if not self.expression and not self.getter:
-                raise RuntimeError('Property val has no expression and lacks a getter')
-        elif self.variant == 'pit':
-            if not self.expression and not self.setter:
-                raise RuntimeError('Property pit has no expression and lacks a setter')
+        if 'spawninit' in self.modifiers:
+            if self.expression:
+                raise RuntimeError
+            self._value = RawValue(self.allocator.allocate())
+        else:
+            if self.variant == 'var':
+                if not self.expression and not (self.getter and self.setter):
+                    raise RuntimeError('Property var has no expression and lacks a getter or setter')
+            elif self.variant == 'val':
+                if not self.expression and not self.getter:
+                    raise RuntimeError('Property val has no expression and lacks a getter')
+            elif self.variant == 'pit':
+                if not self.expression and not self.setter:
+                    raise RuntimeError('Property pit has no expression and lacks a setter')
 
         self.context.add(self.identifier, None, self)
 
@@ -204,6 +209,35 @@ class Property:
         if self.setter:
             return self.setter.call(arg, self.value)
         return None
+
+
+class ScriptSpawn:
+    def __init__(self, script: Script, arguments, context: Context):
+        self.context = context
+        self.script = script
+        self.arguments = arguments
+
+    def to_node(self):
+        args = [RawValue(self.script.index, self.context)]
+        block = []
+        for arg in self.arguments:
+            if isinstance(arg, ExpressionBody):
+                ret = arg.returns
+                block.append(arg)
+            elif isinstance(arg, MemberAccess):
+                ret = arg.resolve()
+                block.append(arg)
+            else:
+                ret = arg
+
+            if isinstance(ret, StructConstruction):
+                if not (ret.type.identifier == 'Number' or ret.type.identifier == 'Boolean'):
+                    raise RuntimeError
+            elif not isinstance(ret, (RawValue, BuiltinFunctionCall)):
+                raise RuntimeError
+            args.append(ret)
+        block.append(BuiltinFunctionCall('Spawn', 'None', args, self.context))
+        return ExpressionBody(block, self.context).to_node()
 
 
 class Getter:
@@ -322,10 +356,11 @@ class Script:
         self.callbacks = []
         self.initialize_properties = []
         self.parameters = {}
+        self.index = None
 
         for p in node.parameters:
             param_name = p.value
-            allocation = self.context.entity_data.allocate()
+            allocation = RawValue(self.context.entity_data.allocate())
             self.context.add(param_name, None, allocation)
             self.parameters[param_name] = allocation
 
@@ -614,6 +649,8 @@ class ExpressionBody:
                     if not fun:
                         raise RuntimeError
                     return fun.call([value.receiver] + arguments)
+                elif isinstance(value, SimpleIdentifierNode) and isinstance(self.context.find(value.value), Script):
+                    return ScriptSpawn(self.context.find(value.value), arguments, self.context)
                 else:
                     fun_identifier = value.value
 
@@ -621,11 +658,11 @@ class ExpressionBody:
                         return BuiltinFunctionCall(fun_identifier, self.raw, arguments, self.context)
 
                     try:
-                        sig_str = tuple(a.type.identifier for a in arguments)
+                        sig_str = tuple('Raw' if isinstance(a, RawValue) else a.type.identifier for a in arguments)
                     except AttributeError:
                         raise RuntimeError
                     try:
-                        sig = tuple(a.type for a in arguments)
+                        sig = tuple(self.raw if isinstance(a, RawValue) else a.type for a in arguments)
                     except AttributeError:
                         raise RuntimeError
 

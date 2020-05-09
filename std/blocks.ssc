@@ -2,11 +2,11 @@ struct BlockAccessor(
     const id: Number
 ) {
     fun get(index: Number) {
-        Get(id, index)
+        Get(id.value, index.value)
     }
 
     fun set(index: Number, value: Number) {
-        Set(id, index, value)
+        Set(id.value, index.value, value.value)
     }
 }
 

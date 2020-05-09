@@ -1,0 +1,33 @@
+import manager
+import constants
+
+script Note() {
+
+}
+
+script Effect() {
+    spawninit val s_effectTime
+    val effectTime
+        get() { Number(s_effectTime) }
+
+    var effectScale = 0.0
+    var effectSize = 0.0
+
+    callback updateParallel {
+        if (now - effectTime < 0.3) {
+            effectScale = (now - effectTime) / 0.3
+            effectSize = effectScale * 0.4
+            draw(
+                32006,
+                -effectSize, -effectSize,
+                -effectSize, +effectSize,
+                effectSize, +effectSize,
+                effectSize, -effectSize,
+                1,
+                1 - effectScale
+            )
+        } else {
+            true
+        }
+    }
+}

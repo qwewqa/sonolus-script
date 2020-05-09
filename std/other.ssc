@@ -18,10 +18,6 @@ fun draw(
     Draw(id, x1, y1, x2, y2, x3, y3, x4, y4, z, alpha)
 }
 
-fun play(id: Number, dist: Number) {
-    Play(id, dist)
-}
-
 fun judge(
     src: Number,
     dst: Number,
@@ -60,3 +56,9 @@ fun getNumber(id: Number, index: Number) {
 fun getBoolean(id: Number, index: Number) {
     Boolean(Get(id.value, index.value))
 }
+
+fun play(id: Number, time: Number) {
+    Play(id.value, time.value)
+}
+
+val now get() { getNumber(1, 0) }

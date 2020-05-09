@@ -1,0 +1,17 @@
+private const TEMPORARY_DATA = 101
+
+val touchIdentifier get() { getNumber(TEMPORARY_DATA, 0) }
+val touchStarted get() { getBoolean(TEMPORARY_DATA, 1) }
+val touchEnded get() { getBoolean(TEMPORARY_DATA, 2) }
+val touchTime get() { getNumber(TEMPORARY_DATA, 3) }
+val touchStartTime get() { getNumber(TEMPORARY_DATA, 4) }
+val touchX get() { getNumber(TEMPORARY_DATA, 5) }
+val touchY get() { getNumber(TEMPORARY_DATA, 6) }
+val touchStartX get() { getNumber(TEMPORARY_DATA, 7) }
+val touchStartY get() { getNumber(TEMPORARY_DATA, 8) }
+val touchDeltaX get() { getNumber(TEMPORARY_DATA, 9) }
+val touchDeltaY get() { getNumber(TEMPORARY_DATA, 10) }
+val touchVelocityX get() { getNumber(TEMPORARY_DATA, 11) }
+val touchVelocityY get() { getNumber(TEMPORARY_DATA, 12) }
+val touchVelocityR get() { getNumber(TEMPORARY_DATA, 13) } // polar
+val touchVelocityW get() { getNumber(TEMPORARY_DATA, 14) } // polar

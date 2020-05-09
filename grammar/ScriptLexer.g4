@@ -92,6 +92,7 @@ SHARED: 'shared' ;
 STATIC: 'static' ;
 OPERATOR: 'operator' ;
 DATA: 'data' ;
+SPAWNINIT: 'spawninit' ;
 
 //
 

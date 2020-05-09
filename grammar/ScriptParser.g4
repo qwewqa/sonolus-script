@@ -279,7 +279,8 @@ modifier
     | SHARED
     | STATIC
     | OPERATOR
-    | DATA) NL*
+    | DATA
+    | SPAWNINIT) NL*
     ;
 
 identifier

@@ -5,6 +5,7 @@ from typing import Set
 
 from compile.context import *
 from yaml import load
+
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
@@ -31,11 +32,15 @@ class Compiler:
         self.nodes = set()
         self.entry_nodes = defaultdict(lambda: {})
         self.archetypes = {a.identifier: a for a in self.context.find_all(signature=None) if isinstance(a, Archetype)}
-        self.scripts = list(set(a.script for a in self.archetypes.values()))
+        self.scripts = list(set(
+            [a.script for a in self.archetypes.values()] + [a for a in self.context.find_all(signature=None) if
+                                                            isinstance(a, Script)]))
+        self.script_mappings = {s: i for i, s in enumerate(self.scripts)}
+        for s in self.scripts:
+            s.index = self.script_mappings[s]
         for s in self.scripts:
             self.process_script(s)
         self.node_mappings = {n: i for i, n in enumerate(self.nodes)}
-        self.script_mappings = {s: i for i, s in enumerate(self.scripts)}
         self.archetype_mappings = {a: i for i, a in enumerate(self.archetypes.values())}
         self.nodes_out = [n.to_dict(self.node_mappings) for n in self.nodes]
         self.archetypes_out = [a.to_dict(self.script_mappings) for a in self.archetypes.values()]
@@ -60,12 +65,11 @@ class Compiler:
         with open(os.path.join(search_path, 'level.json'), 'w') as level_file:
             json.dump({
                 'configuration': configuration,
-                'entities' : self.entities_out,
+                'entities': self.entities_out,
                 'archetypes': self.archetypes_out,
                 'scripts': self.scripts_out,
                 'nodes': self.nodes_out
             }, level_file)
-
 
     def process_script(self, script: Script):
         for c in script.callbacks:
@@ -115,7 +119,7 @@ class Compiler:
         if isinstance(node, ValueSNode):
             return False
         else:
-            if node.name == 'Set':
+            if node.name in {'Set', 'Play', 'Spawn'}:
                 return True
             return any(self.node_has_side_effects(a) for a in node.arguments)
 

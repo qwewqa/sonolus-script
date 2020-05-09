@@ -1,5 +1,7 @@
 import constants
 
+// levelvar
+
 script Initializer() {
     callback updateSequential {
         true
