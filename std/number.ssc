@@ -110,6 +110,10 @@ struct Number(value: Raw) {
         Number(Trunc(value))
     }
 
+    fun clamp(min: Number, max: Number) {
+        Number(Clamp(value, min.value, max.value))
+    }
+
     val percent get() { this / 100 }
     val deg get() { Number(Degree(value)) }
     val rad get() { Number(Radian(value)) }
