@@ -651,7 +651,7 @@ class ExpressionBody:
             e = self.context.find(expression.value, None)
             this = self.context.find('this', None)
             this_find_result = isinstance(this, StructConstruction) and this.find(expression.value)
-            if this_find_result:
+            if not e and this_find_result:
                 e = this_find_result
             if isinstance(e, Property):
                 e = e.with_receiver(this)
@@ -786,7 +786,8 @@ class ExpressionBody:
         raise RuntimeError
 
     def to_node(self):
-        args = [e.to_node() for e in self.expressions if e.to_node()]
+        args = [e.to_node() for e in self.expressions]
+        args = [arg for arg in args if arg]
         return FunctionSNode(
             'Execute',
             args

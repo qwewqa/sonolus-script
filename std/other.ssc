@@ -79,21 +79,39 @@ struct Rectangle(
     centerX: Number,
     centerY: Number,
     width: Number,
-    height: Number
+    height: Number,
+    rotation: Number
 ) {
-    inline val x1 = centerX - width / 2
-    inline val y1 = centerY - height / 2
-    inline val x2 = centerX - width / 2
-    inline val y2 = centerY + height / 2
-    inline val x3 = centerX + width / 2
-    inline val y3 = centerY + height / 2
-    inline val x4 = centerX + width / 2
-    inline val y4 = centerY - height / 2
+    inline val _x1 = -width / 2
+    inline val _y1 = -height / 2
+    inline val _x2 = -width / 2
+    inline val _y2 = +height / 2
+    inline val _x3 = +width / 2
+    inline val _y3 = +height / 2
+    inline val _x4 = +width / 2
+    inline val _y4 = -height / 2
+
+    inline val x1 = centerX + cos(rotation) * _x1 - sin(rotation) * _y1
+    inline val y1 = centerY + sin(rotation) * _x1 + cos(rotation) * _y1
+    inline val x2 = centerX + cos(rotation) * _x2 - sin(rotation) * _y2
+    inline val y2 = centerY + sin(rotation) * _x2 + cos(rotation) * _y2
+    inline val x3 = centerX + cos(rotation) * _x3 - sin(rotation) * _y3
+    inline val y3 = centerY + sin(rotation) * _x3 + cos(rotation) * _y3
+    inline val x4 = centerX + cos(rotation) * _x4 - sin(rotation) * _y4
+    inline val y4 = centerY + sin(rotation) * _x4 + cos(rotation) * _y4
 
     fun drawSprite(id: Number, z: Number, alpha: Number) {
         draw(
             id, x1, y1, x2, y2, x3, y3, x4, y4, z, alpha
         )
+    }
+
+    fun flippedVertically() {
+        Rectangle(centerX, centerY, width, -height, rotation)
+    }
+
+    fun rotated(angle: Number) {
+        Rectangle(centerX, centerY, width, height, rotation + angle)
     }
 }
 
@@ -101,6 +119,19 @@ struct Point(x: Number, y: Number) {
     operator fun distanceTo(other: Point) {
         ((x - other.x)**2 + (y - other.y)**2)**0.5
     }
+
+    fun translated(x: Number, y: Number) {
+        Point(this.x + x, this.y + y)
+    }
+}
+
+fun Rectangle(
+    center: Point,
+    width: Number,
+    height: Number,
+    rotation: Number
+) {
+    Rectangle(center.x, center.y, width, height, rotation)
 }
 
 fun Rectangle(
@@ -108,5 +139,14 @@ fun Rectangle(
     width: Number,
     height: Number
 ) {
-    Rectangle(center.x, center.y, width, height)
+    Rectangle(center.x, center.y, width, height, 0)
+}
+
+fun Rectangle(
+    centerX: Number,
+    centerY: Number,
+    width: Number,
+    height: Number
+) {
+    Rectangle(centerX, centerY, width, height, 0)
 }
