@@ -29,7 +29,6 @@ script PostGameManager() {
     callback @100 touch {
         if (touchStarted && !touchOccupied) {
             play(CLIP_EMPTY, MIN_EFFECT_TIME)
-            Effect(now)
         }
     }
 }

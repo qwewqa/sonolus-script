@@ -119,7 +119,7 @@ class Compiler:
         if isinstance(node, ValueSNode):
             return False
         else:
-            if node.name in {'Set', 'Play', 'Spawn'}:
+            if node.name in {'Set', 'Play', 'Spawn', 'Draw'}:
                 return True
             return any(self.node_has_side_effects(a) for a in node.arguments)
 

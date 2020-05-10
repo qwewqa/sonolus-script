@@ -7,6 +7,7 @@ val touchTime get() { getNumber(TEMPORARY_DATA, 3) }
 val touchStartTime get() { getNumber(TEMPORARY_DATA, 4) }
 val touchX get() { getNumber(TEMPORARY_DATA, 5) }
 val touchY get() { getNumber(TEMPORARY_DATA, 6) }
+val touchPosition get() { Point(touchX, touchY) }
 val touchStartX get() { getNumber(TEMPORARY_DATA, 7) }
 val touchStartY get() { getNumber(TEMPORARY_DATA, 8) }
 val touchDeltaX get() { getNumber(TEMPORARY_DATA, 9) }
@@ -15,3 +16,11 @@ val touchVelocityX get() { getNumber(TEMPORARY_DATA, 11) }
 val touchVelocityY get() { getNumber(TEMPORARY_DATA, 12) }
 val touchVelocityR get() { getNumber(TEMPORARY_DATA, 13) } // polar
 val touchVelocityW get() { getNumber(TEMPORARY_DATA, 14) } // polar
+
+var judgement
+    get() {
+        getNumber(23, 0)
+    }
+    set(value: Number) {
+        set(23, 0, value)
+    }

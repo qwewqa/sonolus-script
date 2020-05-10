@@ -1,8 +1,69 @@
 import manager
 import constants
 
-script Note() {
+const NOTE_SIZE = 0.4
+const PERFECT_WINDOW = 0.050
+const GREAT_WINDOW = 0.100
+const GOOD_WINDOW = 0.120
 
+const NOTE_SPRITE = 1001
+const SLOT_SPRITE = 41001
+
+archetype BasicNote :: #Note(targetX = 0, targetY = 0,
+                            spawnDistance = 1.5, angle = 0, preemptTime = 0.7,
+                            fadeinTime = 0.1, scale = 1, noteZ = 0)
+
+script Note(_targetTime, _targetX, _targetY, _spawnDistance, _angle, _preemptTime, _fadeinTime, _scale, _noteZ) {
+    inline val targetTime = Number(_targetTime)
+    inline val targetX = Number(_targetX)
+    inline val targetY = Number(_targetY)
+    inline val spawnDistance = Number(_spawnDistance)
+    inline val preemptTime = Number(_preemptTime)
+    inline val fadeinTime = Number(_fadeinTime)
+    inline val scale = Number(_scale)
+    inline val noteZ = Number(_noteZ)
+    val angle = Number(_angle).rad
+    val size = NOTE_SIZE * scale
+
+    inline val spawnedDuration = preemptTime - (targetTime - now)
+    inline val timeToTarget = targetTime - now
+    inline val alpha = min(spawnedDuration / fadeinTime, 1)
+    inline val progress = spawnedDuration / preemptTime
+    inline val relativePosition = timeToTarget / preemptTime
+    inline val noteX = targetX + cos(angle) * spawnDistance * relativePosition
+    inline val noteY = targetY + sin(angle) * spawnDistance * relativePosition
+    inline val notePosition = Point(noteX, noteY)
+    inline val targetPosition = Point(targetX, targetY)
+
+    var hit = false
+    var miss = false
+
+    callback shouldSpawn {
+        targetTime - now <= preemptTime
+    }
+
+    callback updateParallel {
+        Rectangle(targetPosition, size, size).drawSprite(SLOT_SPRITE, 100, alpha)
+        Rectangle(notePosition, size, size).drawSprite(NOTE_SPRITE, noteZ, alpha)
+
+        if (timeToTarget < -GOOD_WINDOW) {
+            miss = true
+        }
+
+        hit || miss
+    }
+
+    callback touch {
+        if (!touchOccupied && touchStarted) {
+            if (!hit && targetPosition.distanceTo(touchPosition) <= size &&
+                timeToTarget.abs() <= GOOD_WINDOW) {
+                touchOccupied = true
+                hit = true
+                judgement = judge(now, targetTime, PERFECT_WINDOW, GREAT_WINDOW, GOOD_WINDOW)
+                play(judgement, 0)
+            }
+        }
+    }
 }
 
 script Effect() {

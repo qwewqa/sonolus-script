@@ -155,7 +155,8 @@ class Property:
                 self.getter = Getter(GetterNode([], [self.expression]), self.context)
             if self.variant in ('pit', 'var'):
                 self.setter = Setter(
-                    SetterNode([], SimpleIdentifierNode(None), SimpleIdentifierNode(None), [self.expression]),
+                    SetterNode([], SimpleIdentifierNode('value'), SimpleIdentifierNode('Any'),
+                               [InfixExpressionNode(self.expression, '=', SimpleIdentifierNode('value'))]),
                     self.context)
             self.inline = True
         else:
@@ -386,7 +387,7 @@ class Archetype:
         args.update(self.defaults)
         args.update(arguments)
         data = [0] * 32
-        for a, v in args:
+        for a, v in args.items():
             data[self.script.parameter_indexes[a]] = v
         while data and data[-1] == 0:
             data.pop()
@@ -441,7 +442,8 @@ class Script:
         next(c for c in self.callbacks if
              c.identifier == 'initialize').add_initialize_properties(self.initialize_properties)
 
-        self.parameter_indexes = {n: p.index for n, p in self.parameters.items()}
+        self.parameter_indexes = {n: p.allocation.index for n, p in self.parameters.items()}
+        self.parameter_indexes.update({n[1:]: p.allocation.index for n, p in self.parameters.items()})
 
         context.add_global(self.identifier, None, self)
 
@@ -510,14 +512,14 @@ class FunctionBody:
         context = FunctionInvocationContext(self.context)
         pre_block = []
         for arg, p in zip(arguments, parameters):  # TODO: Type check
-            if isinstance(arg, ExpressionBody):
-                context.add(p.name, None, arg.returns)
-                pre_block.append(arg)
-            elif isinstance(arg, MemberAccess):
-                context.add(p.name, None, arg.resolve())
-                pre_block.append(arg)
-            else:
-                context.add(p.name, None, arg)
+            while isinstance(arg, (ExpressionBody, MemberAccess)):
+                if isinstance(arg, ExpressionBody):
+                    pre_block.append(arg)
+                    arg = arg.returns
+                elif isinstance(arg, MemberAccess):
+                    pre_block.append(arg)
+                    arg = arg.resolve()
+            context.add(p.name, None, arg)
         return ExpressionBody(pre_block + self.block, context)
 
 
@@ -630,6 +632,9 @@ class ExpressionBody:
             self.type = self.returns.type
         elif isinstance(final, ExpressionBody):
             self.returns = final.returns
+            self.type = final.type
+        elif isinstance(final, MemberAccess):
+            self.returns = final
             self.type = final.type
         else:
             self.returns = None
@@ -836,6 +841,8 @@ class Assignment:
                     return Assignment(self.lhs.arguments[0], self.rhs).to_node()
                 else:
                     raise RuntimeError
+            elif isinstance(self.rhs, MemberAccess):
+                return Assignment(self.lhs, self.rhs.resolve()).to_node()
             elif isinstance(self.rhs, ExpressionBody):
                 return FunctionSNode(
                     'Execute',
@@ -854,10 +861,12 @@ class Assignment:
 
 
 class MemberAccess:
-    def __init__(self, receiver: Union[MemberAccess, ExpressionBody, Struct, StructConstruction], name, context):
+    def __init__(self, receiver: Union[Property, PropertyWithReceiver, MemberAccess, ExpressionBody, Struct, StructConstruction], name, context):
         self.context = context
         self.receiver = receiver
         self.name = name
+        if isinstance(self.receiver, (Property, PropertyWithReceiver)):
+            self.receiver = self.receiver.get_getter()
         if isinstance(self.receiver, Struct):
             self.receiver_type = self.receiver
         else:
@@ -873,8 +882,16 @@ class MemberAccess:
 
     def resolve(self, signature=None):
         if signature is None and isinstance(self.receiver, StructConstruction) and self.receiver.find(self.name):
-            return self.receiver.find(self.name)
-        return self.receiver_type.context.find_direct(self.name, signature)
+            r = self.receiver.find(self.name)
+            if isinstance(r, (PropertyWithReceiver, Property)):
+                return r.with_receiver(self.receiver).get_getter()
+            else:
+                return r
+        r = self.receiver_type.context.find_direct(self.name, signature)
+        if isinstance(r, (PropertyWithReceiver, Property)):
+            return r.with_receiver(self.receiver).get_getter()
+        else:
+            return r
 
     def resolve_with_receiver(self, partial_signature, partial_resolved_signature):
         f = self.resolve((self.receiver_type.identifier,) + partial_signature)

@@ -124,3 +124,23 @@ fun swap(x: Number, y: Number) {
     y = x - y
     x = x - y
 }
+
+fun min(a: Number, b: Number) {
+    Number(Min(a, b))
+}
+
+fun max(a: Number, b: Number) {
+    Number(Max(a, b))
+}
+
+fun sin(n: Number) {
+    Number(Sin(n.value))
+}
+
+fun cos(n: Number) {
+    Number(Cos(n.value))
+}
+
+fun tan(n: Number) {
+    Number(Tan(n.value))
+}
