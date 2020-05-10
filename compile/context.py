@@ -100,7 +100,7 @@ class GlobalContext(Context):
         self.path = path
 
     def get(self, name):
-        if name[-4:] == '.scc':
+        if name[-4:] == '.ssc':
             name = name[:-4]
         if name not in self.symbols or None not in self.symbols[name]:
             from compile.declaration import ScriptFile

@@ -114,9 +114,13 @@ struct Number(value: Raw) {
         Number(Clamp(value, min.value, max.value))
     }
 
+    fun lerp(min: Number, max: Number) {
+        Number(Lerp(min.value, max.value, value))
+    }
+
     val percent get() { this / 100 }
-    val deg get() { Number(Degree(value)) }
-    val rad get() { Number(Radian(value)) }
+    val toDeg get() { Number(Degree(value)) }
+    val toRad get() { Number(Radian(value)) }
 
     operator fun swapWith(other: Number) {
         swap(this, other)
@@ -147,4 +151,8 @@ fun cos(n: Number) {
 
 fun tan(n: Number) {
     Number(Tan(n.value))
+}
+
+fun atan2(y: Number, x: Number) {
+    Number(Arctan2(y.value, x.value))
 }

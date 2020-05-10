@@ -113,6 +113,10 @@ struct Rectangle(
     fun rotated(angle: Number) {
         Rectangle(centerX, centerY, width, height, rotation + angle)
     }
+
+    fun swapped() {
+        Rectangle(centerX, centerY, height, width, rotation)
+    }
 }
 
 struct Point(x: Number, y: Number) {
@@ -122,6 +126,41 @@ struct Point(x: Number, y: Number) {
 
     fun translated(x: Number, y: Number) {
         Point(this.x + x, this.y + y)
+    }
+
+    fun magnitude() {
+        (x**2 + y**2)**0.5
+    }
+
+    fun angle() {
+        atan2(y, x)
+    }
+
+    fun mid(other: Point) {
+        Point((x + other.x) * 0.5, (y + other.y) * 0.5)
+    }
+
+    operator fun plus(other: Point) {
+        Point(this.x + other.x, this.y + other.y)
+    }
+
+    operator fun minus(other: Point) {
+        Point(this.x - other.x, this.y - other.y)
+    }
+
+    operator fun div(n: Number) {
+        Point(x / n, y / n)
+    }
+
+    operator fun lerp(other: Point, n: Number) {
+        Point(n.lerp(x, other.x), n.lerp(y, other.y))
+    }
+
+    fun rotated(angle: Number) {
+        Point(
+            cos(angle) * x - sin(angle) * y,
+            sin(angle) * x + cos(angle) * y
+        )
     }
 }
 
@@ -149,4 +188,12 @@ fun Rectangle(
     height: Number
 ) {
     Rectangle(centerX, centerY, width, height, 0)
+}
+
+fun Rectangle(
+    start: Point,
+    end: Point,
+    width: Number
+) {
+    Rectangle(start.mid(end), width, (end - start).magnitude(), (end - start).angle())
 }

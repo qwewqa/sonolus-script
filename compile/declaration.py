@@ -818,8 +818,8 @@ class Assignment:
                     ]
                 )
             elif isinstance(self.rhs, StructConstruction):
-                if self.rhs.type in ('Number', 'Boolean', 'Raw'):
-                    return Assignment(self.lhs, self.rhs.arguments[0])
+                if self.rhs.type.identifier in ('Number', 'Boolean', 'Raw'):
+                    return Assignment(self.lhs, self.rhs.arguments[0]).to_node()
             elif isinstance(self.rhs, ExpressionBody):
                 return FunctionSNode(
                     'Execute',
